@@ -18,7 +18,7 @@ def log(msg):
 
 def load_pages_list():
     if os.path.isfile('fb_pages_list.json'):
-        pass
+       pass
     else:
         dump_to_file('https://www.socialbakers.com/statistics/facebook/pages/total/denmark/page-%d-%d/')
     json_data = open('fb_pages_list.json', 'r').read()
