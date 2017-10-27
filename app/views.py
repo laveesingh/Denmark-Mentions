@@ -16,29 +16,6 @@ def update(request):
     return HttpResponse("something")
 
 
-def search(request):
-    data = reqeust.GET
-    keywords = data['keywords'].split()
-    comments = Fbcomment.objects.all()
-    valid_comments = []
-    for comment in comments:
-        for keyword in keywords:
-            if keyword in comment['message']:
-                valid_comments.append(comment)
-                break
-    posts = Fbpost.objects.all()
-    valid_posts = []
-    for post in posts:
-        for keyword in keywords:
-            if keyword in comment['message']:
-                valid_posts.append(post)
-                break
-    return HttpResponse({
-        'fb_comments': valid_comments[:100],
-        'fb_comments_count': len(valid_comments),
-        'fb_posts': valid_posts[:100],
-        'fb_posts_count': len(valid_posts)
-        }, safe=False)
 
 def insert_fbpost(content, pagename, timestamp):
     Fbpost.objects.create(
