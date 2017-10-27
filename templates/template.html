@@ -1,0 +1,101 @@
+<!doctype html>
+<html>
+  <head>
+    <title>Denmark Mentions</title>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-alpha.6/css/bootstrap.min.css" integrity="sha384-rwoIResjU2yc3z8GV/NPeZWAv56rSmLldC3R/AZzGRnGxQQKnKkoFVhFQhNUwEyJ" crossorigin="anonymous">
+    <script src="https://code.jquery.com/jquery-3.2.1.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/tether/1.4.0/js/tether.min.js" integrity="sha384-DztdAPBWPRXSA/3eYEEUWrWCy7G5KFbe8fFjk5JAIxUYHKkDx6Qin1DkWx51bBrb" crossorigin="anonymous"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-alpha.6/js/bootstrap.min.js" integrity="sha384-vBWWzlZJ8ea9aCX4pEW3rVHjgjt7zpkNpZk+02D9phzyeVkE+jo0ieGizqPLForn" crossorigin="anonymous"></script>
+  </head>
+  <body>
+
+    <style>
+      .round{
+        border-radius: 5px;
+        padding: 5px;
+      }
+
+    </style>
+
+    <div class='container'>
+      <div class='row'>
+        <div class='col-2'></div>
+        <div class='col-8'>
+          <center><h2>Denmark Mentions</h2></center>
+        </div>
+        <div class='col-2'></div>
+      </div>
+      <div class='row'>
+        <div class='col-2'> </div>
+        <div class='col-8'>
+          <form method='post'>
+            {% csrf_token %}
+            {{ form.as_p }}
+            <button class='btn btn-danger' id="update-btn" title='it should take a while'>Update Archive</button>
+            <button type='submit' class='btn btn-primary'> Search </button>
+          <form>
+        </div>
+        <div class='col-2'>
+        </div>
+      </div>
+      <div class='row' style='margin-top: 10px'>
+        <div class='col-2'></div>
+        <div class='col-8'>
+          <a href='#fb-comments-section'>Comments</a>
+          <a href='#fb-post-section'>Posts</a>
+        </div>
+        <div class='col-2'></div>
+      </div>
+      <a name='fb-comments-section'></a>
+      {% if fb_comments %}
+        <div class='row' style='margin-top: 10px'>
+          <div class='col-2'> </div>
+          <div class='col-8'>
+            <div class='container'>
+              <div class='row'>
+                <div class='bg-info round container col-12'>Total occurrences: {{ fb_comments_count }}, displaying at most 100. </div> <br />
+                {% for comment in fb_comments %}
+                  <div class="card bg-success" style="margin: 5px;">
+                    <h3 class='card-header round text-primary'><strong>Facebook</strong></h3>
+                    <div class="card-block round">
+                      <p class=""><strong>User: </strong>{{comment.username}}</p>
+                      <p class=''><strong>Timestamp: </strong> {{comment.timestamp}}</p>
+                      <p class=""><strong>Comment: </strong> {{comment.message}}</p>
+                    </div>
+                  </div>
+                {% endfor %}
+              </div>
+            </div>
+          </div>
+          <div class='col-2'> </div>
+        </div>
+      {% endif %}
+      <a name="fb-post-section"></a>
+      {% if fb_posts %}
+        <div class='row' style='margin-top: 10px'>
+          <div class='col-2'> </div>
+          <div class='col-8'>
+            <div class='container'>
+              <div class='row'>
+                <div class='bg-info round container col-12'>Total occurrences: {{ fb_posts_count }}, displaying at most 100. </div> <br />
+                {% for post in fb_posts %}
+                  <div class="card bg-success" style="margin: 5px;">
+                    <h3 class='card-header round text-primary'><strong>Facebook</strong></h3>
+                    <div class="card-block round">
+                      <p class=""><strong>Page: </strong>{{post.pagename}}</p>
+                      <p class=''><strong>Timestamp: </strong> {{post.timestamp}}</p>
+                      <p class=""><strong>Post: </strong> {{post.content}}</p>
+                    </div>
+                  </div>
+                {% endfor %}
+              </div>
+            </div>
+          </div>
+          <div class='col-2'> </div>
+        </div>
+      {% endif %}
+    </div>
+    {% load staticfiles %}
+    <script src="{% static 'main.js' %}"></script>
+  </body>
+</html>

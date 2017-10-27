@@ -2,3 +2,4 @@ venv
 *.pyc
 db.sqlite3
 dev_settings.py
+logs.log
