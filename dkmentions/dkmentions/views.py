@@ -1,6 +1,7 @@
 from django.shortcuts import render
 
-from forms import Form
+from app.forms import Form
+
 
 def main(request):
     if request.method == 'POST':
