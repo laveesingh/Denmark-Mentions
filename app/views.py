@@ -3,6 +3,8 @@ from __future__ import unicode_literals, print_function
 import sys
 import threading
 import time
+import os
+import json
 
 from django.shortcuts import render
 from django.http import HttpResponse
@@ -28,7 +30,7 @@ def insert_fbpost(content, pagename, timestamp):
     print('.', end='', file=sys.stderr)
 
 
-def insert_fbcomment(message, username, timestamp):
+def insert_fbcomment(message, username, timestamp, retry=0):
     try:
         Fbcomment.objects.create(
             message=message,
@@ -36,10 +38,16 @@ def insert_fbcomment(message, username, timestamp):
             timestamp=timestamp
         )
     except:
-        # print('active_threads:%d', threading.active_count())  # temporary
-        time.sleep(2)
+        if retry >= 5:
+            # print('active_threads:%d', threading.active_count())  # temporary
+            time.sleep(2)
+        else:
+            time.sleep(1)
+            insert_fbcomment(message, username, timestamp, retry+1)
     print('.', end='', file=sys.stderr)
-def insert_ytcomment(user, message, timestamp, video, channel):
+
+
+def insert_ytcomment(user, message, timestamp, video, channel, retry=0):
     try:
         Ytcomment.objects.create(
                 username = user,
@@ -49,13 +57,24 @@ def insert_ytcomment(user, message, timestamp, video, channel):
                 channel = channel
             )
     except:
-        time.sleep(2)
-    print('.', end='', file=sys.stderr)
+        if retry >= 5:
+            print('~', end='', file=sys.stderr)
+        else:
+            time.sleep(1)
+            insert_ytcomment(user, message, timestamp, video, channel, retry+1)
+    print('!', end='', file=sys.stderr)
 
 
 def save_youtube_object_to_db():
     print("checking youtube for comments")
-    ytstore = scrape_youtube()
+    if os.path.isfile('store.json'):
+        ytstore = json.loads(open('store.json', 'r').read())
+    else:
+        ytstore = scrape_youtube()
+        with open('store.json', 'w') as f:
+            f.write(json.dumps(ytstore))
+    print("done scraping youtube", file=sys.stderr)
+    print("length of ytstore = %d"%len(ytstore))
     for channel in ytstore:
         for video in channel["videos"]:
             for comment in video["comments"]:
@@ -69,15 +88,16 @@ def save_youtube_object_to_db():
                     time.sleep(1)
 
                 if Ytcomment.objects.filter(timestamp=timestamp, message=message):
-                    print('!', end='', file=sys.stderr)
+                    print('-', end='', file=sys.stderr)
                     continue
+                print('?', end='', file=sys.stderr)
                 threading.Thread(target=insert_ytcomment, kwargs={
                     "user": user,
                     "message": message,
                     "timestamp" : timestamp,
                     "video" : vid,
                     "channel" : chan
-                    })
+                    }).start()
 
 def save_scraped_objects_to_db():
     save_youtube_object_to_db()
