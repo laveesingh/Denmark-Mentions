@@ -27,15 +27,17 @@ def search(keywords):
     comments = Fbcomment.objects.all()
     valid_comments = []
     for comment in comments:
+        word_set = set(s.lower() for s in comment.message.split())
         for keyword in keywords:
-            if keyword in comment.message:
+            if keyword.lower() in word_set:
                 valid_comments.append(comment)
                 break
     posts = Fbpost.objects.all()
     valid_posts = []
     for post in posts:
+        word_set = set(s.lower() for s in post.content.split())
         for keyword in keywords:
-            if keyword in post.content:
+            if keyword.lower() in word_set:
                 valid_posts.append(post)
                 break
     return {
