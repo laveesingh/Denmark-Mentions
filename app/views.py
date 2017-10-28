@@ -8,6 +8,8 @@ from django.shortcuts import render
 from django.http import HttpResponse
 
 from facebook_script import scrape_facebook
+from youtube_script import scrape_youtube
+
 from app.models import Ytcomment, Fbpost, Fbcomment, ObjectHash
 
 
@@ -37,10 +39,49 @@ def insert_fbcomment(message, username, timestamp):
         # print('active_threads:%d', threading.active_count())  # temporary
         time.sleep(2)
     print('.', end='', file=sys.stderr)
+def insert_ytcomment(user, message, timestamp, video, channel):
+    try:
+        Ytcomment.objects.create(
+                username = user,
+                message = message,
+                timestamp = timestamp,
+                video = video,
+                channel = channel
+            )
+    except:
+        time.sleep(2)
+    print('.', end='', file=sys.stderr)
 
 
+def save_youtube_object_to_db():
+    print("checking youtube for comments")
+    ytstore = scrape_youtube()
+    for channel in ytstore:
+        for video in channel["videos"]:
+            for comment in video["comments"]:
+                user = comment["user"]
+                message = comment["message"]
+                timestamp = comment["timestamp"]
+                vid = video["title"]
+                chan = channel["channel_name"]
+
+                while threading.active_count() > 100:
+                    time.sleep(1)
+
+                if Ytcomment.objects.filter(timestamp=timestamp, message=message):
+                    print('!', end='', file=sys.stderr)
+                    continue
+                threading.Thread(target=insert_ytcomment, kwargs={
+                    "user": user,
+                    "message": message,
+                    "timestamp" : timestamp,
+                    "video" : vid,
+                    "channel" : chan
+                    })
 
 def save_scraped_objects_to_db():
+    save_youtube_object_to_db()
+    return # temporary
     print("checking facebook for posts and comments...")
     store = scrape_facebook()
     comments = store['post_comments_list']
@@ -79,4 +120,3 @@ def save_scraped_objects_to_db():
             'timestamp': comment['timestamp']
             }).start()
     print('done with the db!!!', file=sys.stderr)
-

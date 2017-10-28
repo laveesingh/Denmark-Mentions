@@ -12,7 +12,8 @@ api_key = "AIzaSyBBrX78q8Q9VP1BxZEWr0s7Xa7vWI8yA8A"
 base_url = "https://www.googleapis.com/youtube/v3"
 
 channel_objects = []
-
+channel_no = 0
+finished_channels = 0
 def log(s):
 	print(s, file=sys.stderr)
 
@@ -104,20 +105,25 @@ def fetch_comments_list(video_id):
 
 def load_channel_list():
 	if os.path.isfile("yt_channels_list.json"):
-		pass
+		log("found json for pages list!")
 	else:
 		dump_to_file()
 	json_data = open("yt_channels_list.json", 'r').read()
 	store = json.loads(json_data)
 	return store["yt_channels_list"]
 
-if __name__ == '__main__':
-	channel_ids = load_channel_list()
-	channel_no = 0
-	finished_channels = 0
+def scrape_youtube():
+	global channel_no
+	# channel_ids = load_channel_list()
+	channel_ids = ["UCaLX2DHj46UOsofbmSySHrQ", "UCXbsUubmNPK8XJFbkmlMcMg", "UCZ7jrpFx6CSGRxdWh1UlljQ", "UCKE8HAIVrpixOsQsAqQ_PZQ", "UCy_FdfBF"]
 	for channel_id in channel_ids:
 		while threading.active_count() > 100:
 			time.sleep(10)
 		threading.Thread(target=fetch_channel_obj, kwargs=({'channel_id': channel_id})).start()
 		channel_no += 1
 		log('channel_no: %d, finished_channels: %d' % (channel_no, finished_channels))
+
+	while threading.active_count() > 4:
+		time.sleep(10)
+
+	return channel_objects
