@@ -23,7 +23,7 @@ SECRET_KEY = '#mx%3s!6me9a#@mri8p9-65$#$@$l3)jsr)r$#lsf_cb5nz92e'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['localhost', 'https://denmark-mentions.herokuapp.com/']
 
 
 # Application definition
