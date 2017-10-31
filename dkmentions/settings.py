@@ -4,10 +4,7 @@ import os
 try:
     from .dev_settings import DATABASE_DEFAULT
 except:
-    DATABASE_DEFAULT = {
-        'ENGINE': 'django.db.backends.postgresql_psycopg2',
-        'NAME': 'mentions'
-    }
+    from .prod_settings import DATABASE_DEFAULT
 
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
@@ -75,9 +72,9 @@ WSGI_APPLICATION = 'dkmentions.wsgi.application'
 DATABASES = {
     'default': DATABASE_DEFAULT
 }
-import dj_database_url
-db_from_env = dj_database_url.config()
-DATABASES['default'].update(db_from_env)
+# import dj_database_url
+# db_from_env = dj_database_url.config()
+# DATABASES['default'].update(db_from_env)
 
 
 # Password validation
