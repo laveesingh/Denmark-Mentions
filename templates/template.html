@@ -14,6 +14,14 @@
         border-radius: 5px;
         padding: 5px;
       }
+      #submit-btn{
+        background-color: #428bca;
+        color: white;
+      }
+      #update-btn{
+        background-color: #d9534f;
+        color: white;
+      }
 
     </style>
 
@@ -27,13 +35,24 @@
       </div>
       <div class='row'>
         <div class='col-2'> </div>
-        <div class='col-8'>
+        <div class='col-4'>
           <form method='post'>
             {% csrf_token %}
-            {{ form.as_p }}
-            <button class='btn btn-danger' id="update-btn" title='it should take a while'>Update Archive</button>
-            <button type='submit' class='btn btn-primary'> Search </button>
-          <form>
+            {% for comp in form %}
+            <div class='input-group'>
+              {{ comp }}
+              <button type='submit' class='btn btn-primary input-group-addon' id='submit-btn'> Search </button>
+            </div>
+            {% endfor %}
+          </form>
+        </div>
+        <div class='col-4'>
+          <div class='input-group'>
+            <input type='text' class='form-control' placeholder='access token here' id='access_token' />
+            <button class='btn btn-danger input-group-addon' id="update-btn" title='it should take a while'>
+              Update Archive
+            </button>
+          </div>
         </div>
         <div class='col-2'>
         </div>

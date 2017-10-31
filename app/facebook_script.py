@@ -5,110 +5,159 @@ import os
 import time
 import json
 import threading
+import datetime
 from pprint import pprint
+
+from app.models import Fbcomment, Fbpost
 
 from fb_pages_list import dump_to_file
 
 
 HOST = 'graph.facebook.com'
-access_token = 'EAACEdEose0cBAJ5M8nxQEouk90Qfej9b9cbqFZBZCmulfwfZAJAk75O659wN3Kj4Wa0j18g75ZAOnTpknrCmGpyitFesoGAqB9ZClQF2Smdh4whkzQNKZBEivv9Q8cVsL3QRwisTvttXKoUk314V8ud7nrsJXbSgx953y8ds5iUgnnLJbaTayf9q2nHZBj4JhgZD'
-
-start_time = time.time()
+pages_object = {}
+f = open('fb_logs.log', 'w', 0)
 
 def log(msg):
-    # print(msg, file=sys.stderr)
-    pass
+    print(msg, file=f)
+
+def inline_log(msg):
+    print(msg, end=' ', file=f)
+
+
+def scrape_facebook(access_token):
+    print('initiated facebook scraping')
+    log('facebook started: %s' % datetime.datetime.now().strftime('%d/%m/%Y - %H:%M:%S'))
+    pages_list = load_pages_list()
+    log('%d pages to be scraped' % len(pages_list))
+    for page_id in pages_list:
+        time.sleep(2)
+        if threading.active_count() > 100: time.sleep(20)
+        threading.Thread(
+            target=fetch_page_object, 
+            kwargs={
+                'page_id': page_id,
+                'access_token': access_token
+            }
+        ).start()
+
 
 def load_pages_list():
     if os.path.isfile('fb_pages_list.json'):
-        log("found json for pages list!")
+        pass
     else:
-        log("fetching json for pages list...")
-        # log("couldn't find fb_pages_list.json listdir: %s" % str(os.listdir('.')))
         dump_to_file()
-        log("done!")
     json_data = open('fb_pages_list.json', 'r').read()
     store = json.loads(json_data)
     return store['fb_pages_list']
 
 
-def fetch_page_object(page_id, page_count):
-    url = 'https://%s/v2.10/%s?access_token=%s&fields=posts{comments{created_time,from,message},created_time,message},name' % (HOST, str(page_id), access_token)
-    log(  'requesting for page_id:%s ...' % str(page_id) )
-    response = requests.get(url)
-    log('request completed for page: %d' % page_count)
-    post_json = json.loads(response.content)
-    page_name = post_json.get('name')
-
+def fetch_page_object(page_id, access_token):
+    inline_log('^page')
+    get_url = 'https://%s/v2.10/%s?access_token=%s&fields=posts{comments{'\
+            'created_time,from,message},created_time,message},name' %\
+            (HOST, str(page_id), access_token)
+    response = requests.get(get_url)
+    page_object = json.loads(response.content)
+    page_name = page_object.get('name')
+    pages_object[page_id] = {
+        'page_name': page_name,
+        'posts': {}
+    }
     try:
-        post_objects = post_json.get('posts').get('data')
-        return dict(
-                post_objects=post_objects,
-                page_name=page_name
-            )
+        post_objects = page_object.get('posts').get('data')
+        extract_posts_content(post_objects, pages_object[page_id]['posts'], page_name)
     except:
-        return {'post_objects':[], 'page_name':''}
+        pass
 
 
-def fetch_post_content(post_obj, page_name):
-    content = post_obj.get('message')
-    timestamp = post_obj.get('created_time')
-    if not content:
-        return dict()
-    return dict(
-        content=content,
-        page_name=page_name,
-        timestamp=timestamp
-    )
-    
 
-def fetch_post_comments_list(post_obj, page_name):
-    post_content = post_obj.get('message')
-    post_timestamp = post_obj.get('created_time')
-    comment_list = []
+def extract_posts_content(post_objects, posts_object, page_name):
+    for post in post_objects:
+        if threading.active_count() > 50: time.sleep(10)
+        post_id = post.get('id')
+        post_content = post.get('message')
+        timestamp = post.get('created_time')
+        if not post_content:
+            continue
+        posts_object[post_id] = {
+            'id': post_id,
+            'content': post_content,
+            'timestamp': timestamp,
+            'comments': {}
+        }
+        inline_log('>')
+        if Fbpost.objects.filter(timestamp=timestamp, content=post_content):
+            inline_log('^')
+            continue
+        inserted = insert_fbpost(
+            content=post_content,
+            pagename=page_name,
+            timestamp=timestamp
+        )
+        if inserted:
+            inline_log('|')
+        else:
+            inline_log('<')
+        extract_comments(post, posts_object[post_id]['comments'])
+    inline_log('page$')
+
+
+def extract_comments(post_object, comments_object):
+    if post_object.get('comments') is None or\
+            post_object.get('comments').get('data') is None:
+        return
+    for comment in post_object.get('comments').get('data'):
+        if threading.active_count() > 100: 
+            inline_log('threads:%s'%str(threading.active_count()))
+            time.sleep(20)
+        comment_id = comment.get('id')
+        comments_object[comment_id] = {
+            'id': comment_id,
+            'message': comment.get('message'),
+            'user': comment.get('from').get('name'),
+            'timestamp': comment.get('created_time')
+        }
+
+        inline_log('>')
+        if Fbcomment.objects.filter(timestamp=comment.get('created_time'), message=comment.get('message')):
+            inline_log('^')
+            continue
+        inserted = insert_fbcomment(
+            message=comment.get('message'),
+            username=comment.get('from').get('name'),
+            timestamp=comment.get('created_time')
+        )
+        if inserted:
+            inline_log('|')
+        else:
+            inline_log('<')
+
+
+def insert_fbcomment(message, username, timestamp, retry=0):
     try:
-        for comment in post_obj.get('comments').get('data'):
-            comment_list.append({
-                'post_content': post_content,
-                'post_timestamp': post_timestamp,
-                'page_name': page_name,
-                'message': comment.get('message'),
-                'user': comment.get('from').get('name'),
-                'timestamp': comment.get('created_time')
-            })
-        return comment_list
-    except:
-        return []
+        Fbcomment.objects.create(
+            message=message,
+            username=username,
+            timestamp=timestamp
+        )
+        return True
+    except Exception as e:
+        time.sleep(.1)
+        if retry > 5:
+            return False
+        return insert_fbcomment(message, username, timestamp, retry+1)
 
 
-def store_to_lists(page_id, post_content_list, post_comments_list, page_count):
-    page_object = fetch_page_object(page_id, page_count)
-    post_objects = page_object.get('post_objects')
-    page_name = page_object.get('page_name')
-    for post_object in post_objects:
-        post_content = fetch_post_content(post_object, page_name)
-        if post_content:
-            post_content_list.append(post_content)
-        post_comments_list.extend(fetch_post_comments_list(post_object, page_name))
-    log("page scraped: %d, comments: %d, posts: %d, time: %f, active_threads: %d" % (page_count+1, len(post_comments_list), len(post_content_list), time.time()-start_time, threading.active_count()))
-    print(".", end='', file=sys.stderr)  # temporary
-
-
-
-def scrape_facebook():
-    pages_list = load_pages_list()
-    log("%d pages found" % len(pages_list))
-    post_content_list = []
-    post_comments_list = []
-    page_count = 0
-    for page_id in pages_list:
-        threading.Thread(target=store_to_lists, args=(page_id, post_content_list, post_comments_list, page_count)).start()
-        page_count += 1
-    while threading.active_count() > 4:
-        time.sleep(10)
-
-    return dict(
-        post_content_list=post_content_list,
-        post_comments_list=post_comments_list
-    )
-
+def insert_fbpost(content, pagename, timestamp, retry=0):
+    try:
+        Fbpost.objects.create(
+            content=content,
+            pagename=pagename,
+            timestamp=timestamp
+        )
+        return True
+    except Exception as e:
+        time.sleep(.1)
+        if retry > 5:
+            return False
+        return insert_fbpost(content, pagename, timestamp, retry+1)
