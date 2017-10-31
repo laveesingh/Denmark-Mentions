@@ -37,9 +37,9 @@ def scrape_youtube():
     channel_ids = load_channel_list()
     channel_ids = channel_ids # temporary
     for channel_id in channel_ids:
-        time.sleep(20)
+        time.sleep(5)
         while threading.active_count() > 100: # temporary
-            time.sleep(20)
+            time.sleep(5)
         threading.Thread(
             target=fetch_channel_obj, 
             kwargs={

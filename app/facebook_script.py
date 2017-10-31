@@ -31,7 +31,9 @@ def scrape_facebook(access_token):
     log('%d pages to be scraped' % len(pages_list))
     for page_id in pages_list:
         time.sleep(2)
-        if threading.active_count() > 100: time.sleep(20)
+        if threading.active_count() > 100:
+            inline_log('threads: %d' % threading.active_count())
+            time.sleep(10)
         threading.Thread(
             target=fetch_page_object, 
             kwargs={
@@ -73,7 +75,9 @@ def fetch_page_object(page_id, access_token):
 
 def extract_posts_content(post_objects, posts_object, page_name):
     for post in post_objects:
-        if threading.active_count() > 50: time.sleep(10)
+        if threading.active_count() > 50:
+            inline_log('threads: %d' % threading.active_count())
+            time.sleep(10)
         post_id = post.get('id')
         post_content = post.get('message')
         timestamp = post.get('created_time')
