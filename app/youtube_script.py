@@ -56,7 +56,7 @@ def fetch_channel_obj(channel_id):
     response = requests.get(channel_url)
     rjson = json.loads(response.content)
     if rjson.get('items') is None or len(rjson.get('items')) < 1:
-        time.sleep(.2)
+        time.sleep(1)
         rjson = json.loads(requests.get(channel_url).content)
         if rjson.get('items') is None or len(rjson.get('items')) < 1:
             inline_log('?channel_err')
@@ -72,7 +72,7 @@ def fetch_channel_obj(channel_id):
         'playlist_id': playlist_id,
         'videos': {}
     }
-    if threading.active_count() > 50: time.sleep(.2)
+    if threading.active_count() > 50: time.sleep(1)
     threading.Thread(
         target=fetch_videos_list,
         kwargs={
@@ -92,7 +92,7 @@ def fetch_videos_list(playlist_id, videos_object):
         if rjson.get('items') is None:
             break
         for item in rjson.get('items'):
-            if threading.active_count() > 50: time.sleep(.2)
+            if threading.active_count() > 50: time.sleep(1)
             video_id = item["contentDetails"]["videoId"]
             videos_object[video_id] = {
                 'title': item['snippet']['title'],
@@ -125,7 +125,7 @@ def fetch_comments_list(video_id, video_title, comments_object):
         if rjson.get('items') is None:
             break
         for item in rjson['items']:
-            if threading.active_count() > 50: time.sleep(.2)
+            if threading.active_count() > 50: time.sleep(1)
             snippet = item["snippet"]["topLevelComment"]['snippet']
             comments_object[item['id']] = {
                 'user': snippet['authorDisplayName'],
@@ -154,7 +154,7 @@ def fetch_comments_list(video_id, video_title, comments_object):
             if item.get('replies') is None:
                 continue
             for comment in item['replies']['comments']:
-                if threading.active_count() > 50: time.sleep(.2)
+                if threading.active_count() > 50: time.sleep(1)
                 comments_object[comment['id']] = {
                     'user': comment['snippet']['authorDisplayName'],
                     'message': comment['snippet']['textDisplay'],
