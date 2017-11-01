@@ -30,18 +30,19 @@ def scrape_facebook(access_token):
     pages_list = load_pages_list()
     log('%d pages to be scraped' % len(pages_list))
     for page_id in pages_list:
-        time.sleep(2)
-        if threading.active_count() > 100:
-            while threading.active_count() > 10:
-                inline_log('threads1: %d' % threading.active_count())
-                time.sleep(2)
-        threading.Thread(
-            target=fetch_page_object, 
-            kwargs={
-                'page_id': page_id,
-                'access_token': access_token
-            }
-        ).start()
+        # time.sleep(2)
+        # if threading.active_count() > 100:
+            # while threading.active_count() > 10:
+                # inline_log('threads1: %d' % threading.active_count())
+                # time.sleep(2)
+        # threading.Thread(
+            # target=fetch_page_object, 
+            # kwargs={
+                # 'page_id': page_id,
+                # 'access_token': access_token
+            # }
+        # ).start()
+        fetch_page_object(page_id, access_token)
 
 
 def load_pages_list():
@@ -76,10 +77,10 @@ def fetch_page_object(page_id, access_token):
 
 def extract_posts_content(post_objects, posts_object, page_name):
     for post in post_objects:
-        if threading.active_count() > 50:
-            while threading.active_count() > 10:
-                inline_log('threads2: %d' % threading.active_count())
-                time.sleep(2)
+        # if threading.active_count() > 50:
+            # while threading.active_count() > 10:
+                # inline_log('threads2: %d' % threading.active_count())
+                # time.sleep(2)
         post_id = post.get('id')
         post_content = post.get('message')
         timestamp = post.get('created_time')
@@ -113,10 +114,10 @@ def extract_comments(post_object, comments_object):
             post_object.get('comments').get('data') is None:
         return
     for comment in post_object.get('comments').get('data'):
-        if threading.active_count() > 100: 
-            while threading.active_count() > 10:
-                inline_log('threads3:%s'%str(threading.active_count()))
-                time.sleep(2)
+        # if threading.active_count() > 100: 
+            # while threading.active_count() > 10:
+                # inline_log('threads3:%s'%str(threading.active_count()))
+                # time.sleep(2)
         comment_id = comment.get('id')
         comments_object[comment_id] = {
             'id': comment_id,
