@@ -24,16 +24,17 @@ def update(request):
         })
     print('database update requested')
     print('starting youtube thread')
-    # threading.Thread(
-        # target=scrape_youtube
-    # ).start()
-    # threading.Thread(
-        # target=scrape_facebook,
-        # kwargs={
-            # 'access_token': access_token
-        # }
-    # ).start()
-    scrape_facebook(access_token)
-    scrape_youtube()
+    threading.Thread(
+        target=scrape_youtube
+    ).start()
+    print('starting facebook thread')
+    threading.Thread(
+        target=scrape_facebook,
+        kwargs={
+            'access_token': access_token
+        }
+    ).start()
+    # scrape_facebook(access_token)
+    # scrape_youtube()
     return JsonResponse({'msg': 'update in progress'})
 

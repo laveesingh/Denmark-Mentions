@@ -37,17 +37,17 @@ def scrape_youtube():
     channel_ids = load_channel_list()
     channel_ids = channel_ids # temporary
     for channel_id in channel_ids:
-        time.sleep(5)
-        if threading.active_count() > 100: # temporary
-            while threading.active_count() > 10:
-                time.sleep(5)
-        threading.Thread(
-            target=fetch_channel_obj, 
-            kwargs={
-                'channel_id': channel_id
-            }
-        ).start()
-        # fetch_channel_obj(channel_id)
+        # time.sleep(5)
+        # if threading.active_count() > 100: # temporary
+            # while threading.active_count() > 10:
+                # time.sleep(5)
+        # threading.Thread(
+            # target=fetch_channel_obj, 
+            # kwargs={
+                # 'channel_id': channel_id
+            # }
+        # ).start()
+        fetch_channel_obj(channel_id)
 
 
 def fetch_channel_obj(channel_id):
@@ -57,7 +57,7 @@ def fetch_channel_obj(channel_id):
     response = requests.get(channel_url)
     rjson = json.loads(response.content)
     if rjson.get('items') is None or len(rjson.get('items')) < 1:
-        time.sleep(1)
+        # time.sleep(1)
         rjson = json.loads(requests.get(channel_url).content)
         if rjson.get('items') is None or len(rjson.get('items')) < 1:
             inline_log('?channel_err')
@@ -73,16 +73,17 @@ def fetch_channel_obj(channel_id):
         'playlist_id': playlist_id,
         'videos': {}
     }
-    if threading.active_count() > 50: 
-        while threading.active_count() > 10:
-            time.sleep(2)
-    threading.Thread(
-        target=fetch_videos_list,
-        kwargs={
-            'playlist_id': playlist_id,
-            'videos_object': channels_object[channel_id]['videos']
-        }
-    ).start()
+    # if threading.active_count() > 50: 
+        # while threading.active_count() > 10:
+            # time.sleep(2)
+    # threading.Thread(
+        # target=fetch_videos_list,
+        # kwargs={
+            # 'playlist_id': playlist_id,
+            # 'videos_object': channels_object[channel_id]['videos']
+        # }
+    # ).start()
+    fetch_videos_list(playlist_id, channels_object[channel_id]['videos'])
 
 def fetch_videos_list(playlist_id, videos_object):
     inline_log('^v')
@@ -95,9 +96,9 @@ def fetch_videos_list(playlist_id, videos_object):
         if rjson.get('items') is None:
             break
         for item in rjson.get('items'):
-            if threading.active_count() > 50:
-                while threading.active_count() > 10:
-                    time.sleep(1)
+            # if threading.active_count() > 50:
+                # while threading.active_count() > 10:
+                    # time.sleep(1)
             video_id = item["contentDetails"]["videoId"]
             videos_object[video_id] = {
                 'title': item['snippet']['title'],
@@ -105,14 +106,15 @@ def fetch_videos_list(playlist_id, videos_object):
                 'comments': {}
             }
             inline_log('?c')
-            threading.Thread(
-                target=fetch_comments_list,
-                kwargs={
-                    'video_id': video_id,
-                    'comments_object': videos_object[video_id]['comments'],
-                    'video_title': item['snippet']['title']
-                }
-            ).start()
+            # threading.Thread(
+                # target=fetch_comments_list,
+                # kwargs={
+                    # 'video_id': video_id,
+                    # 'comments_object': videos_object[video_id]['comments'],
+                    # 'video_title': item['snippet']['title']
+                # }
+            # ).start()
+            fetch_comments_list(video_id, item['snippet']['title'], videos_object[video_id]['comments'])
         if rjson.get('nextPageToken'):
             next_page="pageToken=" + rjson["nextPageToken"] + "&"
         else:
@@ -130,9 +132,9 @@ def fetch_comments_list(video_id, video_title, comments_object):
         if rjson.get('items') is None:
             break
         for item in rjson['items']:
-            if threading.active_count() > 50:
-                while threading.active_count() > 10:
-                    time.sleep(1)
+            # if threading.active_count() > 50:
+                # while threading.active_count() > 10:
+                    # time.sleep(1)
             snippet = item["snippet"]["topLevelComment"]['snippet']
             comments_object[item['id']] = {
                 'user': snippet['authorDisplayName'],
@@ -161,9 +163,9 @@ def fetch_comments_list(video_id, video_title, comments_object):
             if item.get('replies') is None:
                 continue
             for comment in item['replies']['comments']:
-                if threading.active_count() > 50:
-                    while threading.active_count() > 10:
-                        time.sleep(1)
+                # if threading.active_count() > 50:
+                    # while threading.active_count() > 10:
+                        # time.sleep(1)
                 comments_object[comment['id']] = {
                     'user': comment['snippet']['authorDisplayName'],
                     'message': comment['snippet']['textDisplay'],

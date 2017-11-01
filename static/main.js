@@ -2,16 +2,16 @@ $(document).ready(function(){
 
   $('#update-btn').on('click', function(event){
 
-    event.preventDefault()
-    var csrf_token = $('input[name=csrfmiddlewaretoken]').val()
-    var access_token = $('#access_token').val()
+    event.preventDefault();
+    var csrf_token = $('input[name=csrfmiddlewaretoken]').val();
+    var access_token = $('#access_token').val();
     $.ajaxSetup({
       beforeSend: function(xhr, settings){
-        xhr.setRequestHeader('X-CSRFToken', csrf_token)
+        xhr.setRequestHeader('X-CSRFToken', csrf_token);
       }
     })
-    console.log('csrftoken:', csrf_token)
-    alert('update requested')
+    console.log('csrftoken:', csrf_token);
+    alert('update requested');
     $.ajax({
       type: 'POST',
       url: '/update/',
@@ -19,10 +19,10 @@ $(document).ready(function(){
         'access_token': access_token
       },
       success: function(data, status, xhr){
-        alert(data['msg'])
+        alert(data['msg']);
       },
       error: function(xhr, status, error){
-        console.error(error)
+        console.error(error);
       }
     })
 
