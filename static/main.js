@@ -10,6 +10,8 @@ $(document).ready(function(){
         xhr.setRequestHeader('X-CSRFToken', csrf_token)
       }
     })
+    console.log('csrftoken:', csrf_token)
+    alert('update requested')
     $.ajax({
       type: 'POST',
       url: '/update/',
