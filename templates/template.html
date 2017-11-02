@@ -66,6 +66,8 @@
         <div class='col-2'>
         </div>
       </div>
+      <a name='fb-comments-section'></a>
+      {% if fb_comments %}
       <div class='row' style='margin-top: 10px'>
         <div class='col-2'></div>
         <div class='col-8'>
@@ -75,8 +77,6 @@
         </div>
         <div class='col-2'></div>
       </div>
-      <a name='fb-comments-section'></a>
-      {% if fb_comments %}
         <div class='row' style='margin-top: 10px'>
           <div class='col-2'> </div>
           <div class='col-8'>
@@ -102,6 +102,7 @@
         </div>
       {% endif %}
       <a name='fb-post-section'></a>
+      {% if fb_posts %}
       <div class='row' style='margin-top: 10px'>
         <div class='col-2'></div>
         <div class='col-8'>
@@ -111,7 +112,6 @@
         </div>
         <div class='col-2'></div>
       </div>
-      {% if fb_posts %}
         <div class='row' style='margin-top: 10px'>
           <div class='col-2'> </div>
           <div class='col-8'>
@@ -137,6 +137,7 @@
         </div>
       {% endif %}
       <a name='yt-comments-section'></a>
+      {% if yt_comments %}
       <div class='row' style='margin-top: 10px'>
         <div class='col-2'></div>
         <div class='col-8'>
@@ -146,7 +147,6 @@
         </div>
         <div class='col-2'></div>
       </div>
-      {% if yt_comments %}
         <div class='row' style='margin-top: 10px'>
           <div class='col-2'> </div>
           <div class='col-8'>
