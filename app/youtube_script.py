@@ -6,6 +6,7 @@ import os
 import threading
 import time
 import datetime
+import random
 
 from yt_channels_list import dump_to_file
 
@@ -30,11 +31,9 @@ if os.path.isfile('yt_logs.log'):
 f = open('yt_logs.log', 'w', 0)
 
 def log(s):
-    # print(s, file=sys.stderr)
     print(s, file=f)
 
 def inline_log(s):
-    # print(s, end=' ', file=sys.stderr)
     print(s, end=' ', file=f)
 
 
@@ -42,18 +41,8 @@ def scrape_youtube():
     log('youtube started: %s' % datetime.datetime.now().strftime('%d/%m/%Y - %H:%M:%S'))
     print('youtube started: %s' % datetime.datetime.now().strftime('%d/%m/%Y - %H:%M:%S'))
     channel_ids = load_channel_list()
-    channel_ids = channel_ids # temporary
+    random.shuffle(channel_ids)
     for channel_id in channel_ids:
-        # time.sleep(5)
-        # if threading.active_count() > 100: # temporary
-            # while threading.active_count() > 10:
-                # time.sleep(5)
-        # threading.Thread(
-            # target=fetch_channel_obj, 
-            # kwargs={
-                # 'channel_id': channel_id
-            # }
-        # ).start()
         fetch_channel_obj(channel_id)
 
 
@@ -64,7 +53,6 @@ def fetch_channel_obj(channel_id):
     response = requests.get(channel_url)
     rjson = json.loads(response.content)
     if rjson.get('items') is None or len(rjson.get('items')) < 1:
-        # time.sleep(1)
         rjson = json.loads(requests.get(channel_url).content)
         if rjson.get('items') is None or len(rjson.get('items')) < 1:
             inline_log('?channel_err')
@@ -80,16 +68,6 @@ def fetch_channel_obj(channel_id):
         'playlist_id': playlist_id,
         'videos': {}
     }
-    # if threading.active_count() > 50: 
-        # while threading.active_count() > 10:
-            # time.sleep(2)
-    # threading.Thread(
-        # target=fetch_videos_list,
-        # kwargs={
-            # 'playlist_id': playlist_id,
-            # 'videos_object': channels_object[channel_id]['videos']
-        # }
-    # ).start()
     fetch_videos_list(playlist_id, channels_object[channel_id]['videos'])
 
 def fetch_videos_list(playlist_id, videos_object):
@@ -103,9 +81,6 @@ def fetch_videos_list(playlist_id, videos_object):
         if rjson.get('items') is None:
             break
         for item in rjson.get('items'):
-            # if threading.active_count() > 50:
-                # while threading.active_count() > 10:
-                    # time.sleep(1)
             video_id = item["contentDetails"]["videoId"]
             videos_object[video_id] = {
                 'title': item['snippet']['title'],
@@ -113,14 +88,6 @@ def fetch_videos_list(playlist_id, videos_object):
                 'comments': {}
             }
             inline_log('?c')
-            # threading.Thread(
-                # target=fetch_comments_list,
-                # kwargs={
-                    # 'video_id': video_id,
-                    # 'comments_object': videos_object[video_id]['comments'],
-                    # 'video_title': item['snippet']['title']
-                # }
-            # ).start()
             fetch_comments_list(video_id, item['snippet']['title'], videos_object[video_id]['comments'])
         if rjson.get('nextPageToken'):
             next_page="pageToken=" + rjson["nextPageToken"] + "&"
@@ -139,17 +106,13 @@ def fetch_comments_list(video_id, video_title, comments_object):
         if rjson.get('items') is None:
             break
         for item in rjson['items']:
-            # if threading.active_count() > 50:
-                # while threading.active_count() > 10:
-                    # time.sleep(1)
             snippet = item["snippet"]["topLevelComment"]['snippet']
             comments_object[item['id']] = {
                 'user': snippet['authorDisplayName'],
                 'message': snippet['textDisplay'],
                 'timestamp': snippet['publishedAt']
             }
-            # inserting to database
-            inline_log('>') # to db
+            inline_log('>')
             if Ytcomment.objects.filter(timestamp=snippet['publishedAt'], message=snippet['textDisplay']):
                 inline_log('^')
                 continue
@@ -170,9 +133,6 @@ def fetch_comments_list(video_id, video_title, comments_object):
             if item.get('replies') is None:
                 continue
             for comment in item['replies']['comments']:
-                # if threading.active_count() > 50:
-                    # while threading.active_count() > 10:
-                        # time.sleep(1)
                 comments_object[comment['id']] = {
                     'user': comment['snippet']['authorDisplayName'],
                     'message': comment['snippet']['textDisplay'],
@@ -192,9 +152,9 @@ def fetch_comments_list(video_id, video_title, comments_object):
                         video = video_title,
                         channel = ''
                     )
-                    inline_log('|') # okay
+                    inline_log('|')
                 except:
-                    inline_log('<') # error inserting to db
+                    inline_log('<')
         if("nextPageToken" in rjson):
             next_page="pageToken=" + rjson["nextPageToken"] + "&"
         else:

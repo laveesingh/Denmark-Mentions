@@ -34,7 +34,5 @@ def update(request):
             'access_token': access_token
         }
     ).start()
-    # scrape_facebook(access_token)
-    # scrape_youtube()
     return JsonResponse({'msg': 'update in progress'})
 
