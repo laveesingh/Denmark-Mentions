@@ -20,6 +20,13 @@ comments_url_format = '%s/commentThreads?%svideoId=%s&maxResults=%s&key=%s&part=
 channels_object = {}
 finished_channels = 0
 
+if os.path.isfile('yt_logs.log'):
+    with open('logs.log', 'a') as f:
+        yt_logs = open('yt_logs.log', 'r').read()
+        timestamp = datetime.datetime.now().strftime('%d/%m/%Y - %H:%M:%S'))
+        msg_timestamp = 'another session starts: %s' % timestamp
+        f.write('%s\n%s' % (msg_timestamp, yt_logs))
+
 f = open('yt_logs.log', 'w', 0)
 
 def log(s):
