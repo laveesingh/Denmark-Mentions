@@ -19,7 +19,7 @@ pages_object = {}
 if os.path.isfile('fb_logs.log'):
     with open('logs.log', 'a') as f:
         fb_logs = open('fb_logs.log', 'r').read()
-        timestamp = datetime.datetime.now().strftime('%d/%m/%Y - %H:%M:%S'))
+        timestamp = datetime.datetime.now().strftime('%d/%m/%Y - %H:%M:%S')
         msg_timestamp = 'another session starts: %s' % timestamp
         f.write('%s\n%s' % (msg_timestamp, fb_logs))
 
