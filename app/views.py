@@ -16,7 +16,7 @@ from app.models import Ytcomment, Fbpost, Fbcomment, ObjectHash
 
 
 def update(request):
-    data = request.POST
+    data = request.GET
     access_token = data.get('access_token')
     if not access_token:
         return JsonResponse({

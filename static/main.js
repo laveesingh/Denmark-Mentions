@@ -3,17 +3,17 @@ $(document).ready(function(){
   $('#update-btn').on('click', function(event){
 
     event.preventDefault();
-    var csrf_token = $('input[name=csrfmiddlewaretoken]').val();
     var access_token = $('#access_token').val();
-    $.ajaxSetup({
-      beforeSend: function(xhr, settings){
-        xhr.setRequestHeader('X-CSRFToken', csrf_token);
-      }
-    })
-    console.log('csrftoken:', csrf_token);
+    //var csrf_token = $('input[name=csrfmiddlewaretoken]').val();
+    //$.ajaxSetup({
+      //beforeSend: function(xhr, settings){
+        //xhr.setRequestHeader('X-CSRFToken', csrf_token);
+      //}
+    //})
+    //console.log('csrftoken:', csrf_token);
     alert('update requested');
     $.ajax({
-      type: 'POST',
+      type: 'GET',
       url: '/update/',
       data: {
         'access_token': access_token
