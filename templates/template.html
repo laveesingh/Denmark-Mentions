@@ -10,6 +10,9 @@
   <body>
 
     <style>
+      body{
+        background-color: #dedfe0;
+      }
       .round{
         border-radius: 5px;
         padding: 5px;
@@ -21,6 +24,12 @@
       #update-btn{
         background-color: #d9534f;
         color: white;
+      }
+      .btn-danger{
+        background-color: #d9534f;
+      }
+      .btn-primary{
+        background-color: #428bca;
       }
 
     </style>
@@ -60,8 +69,9 @@
       <div class='row' style='margin-top: 10px'>
         <div class='col-2'></div>
         <div class='col-8'>
-          <a href='#fb-comments-section'>Comments</a>
-          <a href='#fb-post-section'>Posts</a>
+          <a class='btn btn-primary' href='#fb-comments-section'>FB Comments</a>
+          <a class='btn btn-primary' href='#fb-post-section'>FB Posts</a>
+          <a class='btn btn-danger' href='#yt-comments-section'>YT Posts</a>
         </div>
         <div class='col-2'></div>
       </div>
@@ -74,12 +84,14 @@
               <div class='row'>
                 <div class='bg-info round container col-12'>Total occurrences: {{ fb_comments_count }}, displaying at most 100. </div> <br />
                 {% for comment in fb_comments %}
-                  <div class="card bg-success" style="margin: 5px;">
-                    <h3 class='card-header round text-primary'><strong>Facebook</strong></h3>
-                    <div class="card-block round">
-                      <p class=""><strong>User: </strong>{{comment.username}}</p>
-                      <p class=''><strong>Timestamp: </strong> {{comment.timestamp}}</p>
-                      <p class=""><strong>Comment: </strong> {{comment.message}}</p>
+                  <div class='card' style='width: 22rem; margin: 5px;'>
+                    <div class='card-header btn-primary'>
+                      <span>Facebook Comment (id: {{comment.comment_id}})</span>
+                    </div>
+                    <div class='card-block'>
+                      <h4 class='card-title'>{{comment.username}}</h4>
+                      <h6 class='card-subtitle mb-2 text-muted'>{{comment.timestamp}}</h6>
+                      <p class='card-text'>{{comment.message}}</p>
                     </div>
                   </div>
                 {% endfor %}
@@ -89,7 +101,16 @@
           <div class='col-2'> </div>
         </div>
       {% endif %}
-      <a name="fb-post-section"></a>
+      <a name='fb-post-section'></a>
+      <div class='row' style='margin-top: 10px'>
+        <div class='col-2'></div>
+        <div class='col-8'>
+          <a class='btn btn-primary' href='#fb-comments-section'>FB Comments</a>
+          <a class='btn btn-primary' href='#fb-post-section'>FB Posts</a>
+          <a class='btn btn-danger' href='#yt-comments-section'>YT Posts</a>
+        </div>
+        <div class='col-2'></div>
+      </div>
       {% if fb_posts %}
         <div class='row' style='margin-top: 10px'>
           <div class='col-2'> </div>
@@ -98,12 +119,50 @@
               <div class='row'>
                 <div class='bg-info round container col-12'>Total occurrences: {{ fb_posts_count }}, displaying at most 100. </div> <br />
                 {% for post in fb_posts %}
-                  <div class="card bg-success" style="margin: 5px;">
-                    <h3 class='card-header round text-primary'><strong>Facebook</strong></h3>
-                    <div class="card-block round">
-                      <p class=""><strong>Page: </strong>{{post.pagename}}</p>
-                      <p class=''><strong>Timestamp: </strong> {{post.timestamp}}</p>
-                      <p class=""><strong>Post: </strong> {{post.content}}</p>
+                  <div class='card' style='width: 22rem; margin: 5px;'>
+                    <div class='card-header btn-primary'>
+                      <span>Facebook Post (id: {{post.post_id}})</span>
+                    </div>
+                    <div class='card-block'>
+                      <h4 class='card-title'>{{post.pagename}}</h4>
+                      <h6 class='card-subtitle mb-2 text-muted'>{{post.timestamp}}</h6>
+                      <p class='card-text'>{{post.content}}</p>
+                    </div>
+                  </div>
+                {% endfor %}
+              </div>
+            </div>
+          </div>
+          <div class='col-2'> </div>
+        </div>
+      {% endif %}
+      <a name='yt-comments-section'></a>
+      <div class='row' style='margin-top: 10px'>
+        <div class='col-2'></div>
+        <div class='col-8'>
+          <a class='btn btn-primary' href='#fb-comments-section'>FB Comments</a>
+          <a class='btn btn-primary' href='#fb-post-section'>FB Posts</a>
+          <a class='btn btn-danger' href='#yt-comments-section'>YT Posts</a>
+        </div>
+        <div class='col-2'></div>
+      </div>
+      {% if yt_comments %}
+        <div class='row' style='margin-top: 10px'>
+          <div class='col-2'> </div>
+          <div class='col-8'>
+            <div class='container'>
+              <div class='row'>
+                <div class='bg-info round container col-12'>Total occurrences: {{ yt_comments_count }}, displaying at most 100. </div> <br />
+                {% for comment in yt_comments %}
+                  <div class='card' style='width: 22rem; margin: 5px;'>
+                    <div class='card-header btn-danger'>
+                      <span>Youtube Comment (id: {{comment.comment_id}})</span>
+                    </div>
+                    <div class='card-block'>
+                      <h4 class='card-title'>{{comment.username}}</h4>
+                      <h6 class='card-subtitle mb-2 text-muted'>{{comment.timestamp}}</h6>
+                      <h5>Video: {{comment.video}}<h5>
+                      <p class='card-text'>{{comment.message}}</p>
                     </div>
                   </div>
                 {% endfor %}

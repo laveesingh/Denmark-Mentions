@@ -4,13 +4,6 @@ $(document).ready(function(){
 
     event.preventDefault();
     var access_token = $('#access_token').val();
-    //var csrf_token = $('input[name=csrfmiddlewaretoken]').val();
-    //$.ajaxSetup({
-      //beforeSend: function(xhr, settings){
-        //xhr.setRequestHeader('X-CSRFToken', csrf_token);
-      //}
-    //})
-    //console.log('csrftoken:', csrf_token);
     alert('update requested');
     $.ajax({
       type: 'GET',

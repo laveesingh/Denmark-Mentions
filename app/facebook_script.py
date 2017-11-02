@@ -1,3 +1,5 @@
+# -*- coding: utf-8 -*-
+
 from __future__ import print_function
 import requests
 import sys
@@ -84,6 +86,7 @@ def extract_posts_content(post_objects, posts_object, page_name):
             'id': post_id,
             'content': post_content,
             'timestamp': timestamp,
+            'page_name': page_name,
             'comments': {}
         }
         inline_log('>')
@@ -91,6 +94,7 @@ def extract_posts_content(post_objects, posts_object, page_name):
             inline_log('^')
             continue
         inserted = insert_fbpost(
+            post_id=post_id,
             content=post_content,
             pagename=page_name,
             timestamp=timestamp

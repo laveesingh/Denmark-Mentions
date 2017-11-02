@@ -1,18 +1,21 @@
+# -*- coding: utf-8 -*-
 
 from django.db import models
 
 
 class Ytcomment(models.Model):
+    comment_id = models.CharField(max_length=100, default='', null=True)
     message = models.TextField(default="", null=True)
     username = models.CharField(max_length=100, default="", null=True)
     timestamp = models.DateTimeField(unique=False)
     video = models.CharField(max_length=100, default="", null=True)
-    channel = models.CharField(max_length=100, default="", null=True)
+    # channel = models.CharField(max_length=100, default="", null=True)
 
     def __repr__(self):
         return str(self.username) + ": " + str(self.message)
 
 class Fbpost(models.Model):
+    post_id = models.CharField(max_length=100, default='', null=True)
     content = models.TextField(default="", null=True)
     pagename = models.CharField(max_length=100, default="", null=True)
     timestamp = models.DateTimeField(unique=False)
@@ -22,6 +25,7 @@ class Fbpost(models.Model):
 
 
 class Fbcomment(models.Model):
+    comment_id = models.CharField(max_length=100, default='', null=True)
     message = models.TextField(default="", null=True)
     username = models.CharField(max_length=100, default="", null=True)
     timestamp = models.DateTimeField(unique=False)
