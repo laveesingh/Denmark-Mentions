@@ -93,11 +93,8 @@ def extract_posts_content(post_objects, posts_object, page_name):
         qset = Fbpost.objects.filter(timestamp=timestamp, message=post_content)
         if qset:
             instance = qset.first()
-            if not instance.post_id:
-                instance.post_id = post_id
-                instance.save()
-                inline_log('*')
-                continue
+            instance.post_id = post_id
+            instance.save()
             inline_log('^')
             continue
         
@@ -132,11 +129,8 @@ def extract_comments(post_object, comments_object):
         qset = Fbcomment.objects.filter(timestamp=comment.get('created_time'), message=comment.get('message'))
         if qset:
             instance = qset.first()
-            if not instance.comment_id:
-                instance.comment_id = comment.get('id')
-                instance.save()
-                inline_log('*')
-                continue
+            instance.comment_id = comment_id
+            instance.save()
             inline_log('^')
             continue
         inserted = insert_fbcomment(

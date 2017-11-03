@@ -29,15 +29,12 @@ class Fbpost(models.Model):
     message = models.TextField(default="", null=True)
     pagename = models.CharField(max_length=100, default="", null=True)
     timestamp = models.DateTimeField(unique=False)
-    
-    # def __repr__(self):
-        # try:
-            # return self.pagename.encode('utf-8') + ": " + self.timestamp.encode('utf-8')
-        # except:
-            # return "FBPOST"
 
-    # def __unicode__(self):
-        # return self.pagename.encode('utf-8') + ": " + self.timestamp.encode('utf-8')
+    def __repr__(self):
+        return self.post_id if self.post_id else "FBPOST"
+
+    def __unicode__(self):
+        return self.post_id if self.post_id else "FBPOST"
 
 
 class Fbcomment(models.Model):
@@ -45,17 +42,12 @@ class Fbcomment(models.Model):
     message = models.TextField(default="", null=True)
     username = models.CharField(max_length=100, default="", null=True)
     timestamp = models.DateTimeField(unique=False)
-    # post = models.ForeignKey(Fbpost, on_delete=models.CASCADE)
 
-    # def __repr__(self):
-        # try:
-            # return self.username.encode('utf-8') + ": " + self.message.encode('utf-8')
-        # except:
-            # return "FBCOMMENT"
+    def __repr__(self):
+        return self.comment_id if self.comment_id else "FBCOMMENT"
 
-
-    # def __unicode__(self):
-        # return self.username.encode('utf-8') + ": " + self.message.encode('utf-8')
+    def __unicode__(self):
+        return self.comment_id if self.comment_id else "FBCOMMENT"
 
 
 class ObjectHash(models.Model):
