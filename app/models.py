@@ -12,7 +12,11 @@ class Ytcomment(models.Model):
     # channel = models.CharField(max_length=100, default="", null=True)
 
     def __repr__(self):
-        return str(self.username) + ": " + str(self.message)
+        return self.username.encode('utf-8') + ": " + self.message.encode('utf-8')
+
+    def __unicode__(self):
+        return self.username.encode('utf-8') + ": " + self.message.encode('utf-8')
+
 
 class Fbpost(models.Model):
     post_id = models.CharField(max_length=100, default='', null=True)
@@ -20,8 +24,11 @@ class Fbpost(models.Model):
     pagename = models.CharField(max_length=100, default="", null=True)
     timestamp = models.DateTimeField(unique=False)
     
-    def __str__(self):
-        return self.pagename.encode('utf-8') + ": " + str(self.timestamp)
+    def __repr__(self):
+        return self.pagename.encode('utf-8') + ": " + self.timestamp.encode('utf-8')
+
+    def __unicode__(self):
+        return self.pagename.encode('utf-8') + ": " + self.timestamp.encode('utf-8')
 
 
 class Fbcomment(models.Model):
@@ -32,7 +39,11 @@ class Fbcomment(models.Model):
     # post = models.ForeignKey(Fbpost, on_delete=models.CASCADE)
 
     def __repr__(self):
-        return str(self.username) + ": " + str(self.message)
+        return self.username.encode('utf-8') + ": " + self.message.encode('utf-8')
+
+
+    def __unicode__(self):
+        return self.username.encode('utf-8') + ": " + self.message.encode('utf-8')
 
 
 class ObjectHash(models.Model):
