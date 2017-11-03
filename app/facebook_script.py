@@ -90,9 +90,17 @@ def extract_posts_content(post_objects, posts_object, page_name):
             'comments': {}
         }
         inline_log('>')
-        if Fbpost.objects.filter(timestamp=timestamp, message=post_content):
+        qset = Fbpost.objects.filter(timestamp=timestamp, message=post_content)
+        if qset:
+            instance = qset.first()
+            if not instance.post_id:
+                instance.post_id = post_id
+                instance.save()
+                inline_log('*')
+                continue
             inline_log('^')
             continue
+        
         inserted = insert_fbpost(
             post_id=post_id,
             message=post_content,
@@ -121,10 +129,18 @@ def extract_comments(post_object, comments_object):
         }
 
         inline_log('>')
-        if Fbcomment.objects.filter(timestamp=comment.get('created_time'), message=comment.get('message')):
+        qset = Fbcomment.objects.filter(timestamp=comment.get('created_time'), message=comment.get('message'))
+        if qset:
+            instance = qset.first()
+            if not instance.comment_id:
+                instance.comment_id = comment.get('id')
+                instance.save()
+                inline_log('*')
+                continue
             inline_log('^')
             continue
         inserted = insert_fbcomment(
+            comment_id=comment.get('id'),
             message=comment.get('message'),
             username=comment.get('from').get('name'),
             timestamp=comment.get('created_time')
@@ -135,9 +151,10 @@ def extract_comments(post_object, comments_object):
             inline_log('<')
 
 
-def insert_fbcomment(message, username, timestamp, retry=0):
+def insert_fbcomment(comment_id, message, username, timestamp, retry=0):
     try:
         Fbcomment.objects.create(
+            comment_id=comment_id,
             message=message,
             username=username,
             timestamp=timestamp
@@ -150,9 +167,10 @@ def insert_fbcomment(message, username, timestamp, retry=0):
         return insert_fbcomment(message, username, timestamp, retry+1)
 
 
-def insert_fbpost(message, pagename, timestamp, retry=0):
+def insert_fbpost(post_id, message, pagename, timestamp, retry=0):
     try:
         Fbpost.objects.create(
+            post_id=post_id,
             message=message,
             pagename=pagename,
             timestamp=timestamp
