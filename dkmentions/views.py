@@ -15,6 +15,8 @@ def main(request):
         if form.is_valid():
             keywords = form.cleaned_data.get('keywords')
             results = search(keywords)
+        else:
+            results = defaultdict(int)
         context = {
             'form': form,
             'fb_comments': results['fb_comments'],
