@@ -126,7 +126,7 @@ def fetch_comments_list(video_id, video_title, comments_object):
                     message=snippet['textDisplay'],
                     timestamp=snippet['publishedAt'],
                     video = video_title,
-                    channel = ''
+                    # channel = ''
                 )
                 inline_log('|')
             except Exception as e:
@@ -152,7 +152,7 @@ def fetch_comments_list(video_id, video_title, comments_object):
                         message = message,
                         timestamp = timestamp,
                         video = video_title,
-                        channel = ''
+                        # channel = ''
                     )
                     inline_log('|')
                 except:

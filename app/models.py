@@ -16,7 +16,7 @@ class Ytcomment(models.Model):
 
 class Fbpost(models.Model):
     post_id = models.CharField(max_length=100, default='', null=True)
-    content = models.TextField(default="", null=True)
+    message = models.TextField(default="", null=True)
     pagename = models.CharField(max_length=100, default="", null=True)
     timestamp = models.DateTimeField(unique=False)
     

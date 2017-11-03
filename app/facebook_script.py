@@ -84,18 +84,18 @@ def extract_posts_content(post_objects, posts_object, page_name):
             continue
         posts_object[post_id] = {
             'id': post_id,
-            'content': post_content,
+            'message': post_content,
             'timestamp': timestamp,
             'page_name': page_name,
             'comments': {}
         }
         inline_log('>')
-        if Fbpost.objects.filter(timestamp=timestamp, content=post_content):
+        if Fbpost.objects.filter(timestamp=timestamp, message=post_content):
             inline_log('^')
             continue
         inserted = insert_fbpost(
             post_id=post_id,
-            content=post_content,
+            message=post_content,
             pagename=page_name,
             timestamp=timestamp
         )
@@ -150,10 +150,10 @@ def insert_fbcomment(message, username, timestamp, retry=0):
         return insert_fbcomment(message, username, timestamp, retry+1)
 
 
-def insert_fbpost(content, pagename, timestamp, retry=0):
+def insert_fbpost(message, pagename, timestamp, retry=0):
     try:
         Fbpost.objects.create(
-            content=content,
+            message=message,
             pagename=pagename,
             timestamp=timestamp
         )
@@ -162,4 +162,4 @@ def insert_fbpost(content, pagename, timestamp, retry=0):
         time.sleep(.1)
         if retry > 5:
             return False
-        return insert_fbpost(content, pagename, timestamp, retry+1)
+        return insert_fbpost(message, pagename, timestamp, retry+1)
