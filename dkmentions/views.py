@@ -42,10 +42,10 @@ def search(keywords):
     valid_fb_comments = Fbcomment.objects.filter(qset)
     valid_yt_comments = Ytcomment.objects.filter(qset)
     return {
-        'fb_comments': valid_fb_comments[:100],
+        'fb_comments': valid_fb_comments,
         'fb_comments_count': len(valid_fb_comments),
-        'fb_posts': valid_fb_posts[:100],
+        'fb_posts': valid_fb_posts,
         'fb_posts_count': len(valid_fb_posts),
-        'yt_comments': valid_yt_comments[:100],
+        'yt_comments': valid_yt_comments,
         'yt_comments_count': len(valid_yt_comments)
     }
