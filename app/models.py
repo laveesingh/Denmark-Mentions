@@ -9,19 +9,6 @@ class Ytcomment(models.Model):
     username = models.CharField(max_length=100, default="", null=True)
     timestamp = models.DateTimeField(unique=False)
     video = models.CharField(max_length=100, default="", null=True)
-    # channel = models.CharField(max_length=100, default="", null=True)
-
-    # def __repr__(self):
-        # try:
-            # return self.username.encode('utf-8') + ": " + self.message.encode('utf-8')
-        # except:
-            # return "YTCOMMENT"
-
-    # def __unicode__(self):
-        # try:
-            # return self.username.encode('utf-8') + ": " + self.message.encode('utf-8')
-        # except:
-            # return "YTCOMMENT"
 
 
 class Fbpost(models.Model):

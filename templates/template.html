@@ -31,6 +31,12 @@
       .btn-primary{
         background-color: #428bca;
       }
+      .input-group{
+        margin-top: 10px;
+      }
+      #date{
+        background-color: white;
+      }
 
     </style>
 
@@ -44,23 +50,40 @@
       </div>
       <div class='row'>
         <div class='col-2'> </div>
-        <div class='col-4'>
-          <form method='post'>
-            {% csrf_token %}
-            {% for comp in form %}
-            <div class='input-group'>
-              {{ comp }}
-              <button type='submit' class='btn btn-primary input-group-addon' id='submit-btn'> Search </button>
+        <div class='col-8'>
+          <div class='container'>
+            <div class='row'>
+              <div class='col-12'>
+                <form method='post'>
+                  {% csrf_token %}
+                  <!--{% for comp in form %}-->
+                  <!--<div class='input-group'>-->
+                    <!--{{ comp }}-->
+                    <!--<input type='text' id='date' -->
+                      <!--class='input-group-addon'-->
+                      <!--placeholder='start date: dd-mm-yyyy' title='only results after date will be displayed'/>-->
+                    <!--<button type='submit' class='btn btn-primary input-group-addon' id='submit-btn'> Search </button>-->
+                  <!--</div>-->
+                  <!--{% endfor %}-->
+                  <div class='input-group'>
+                    {% for comp in form %}
+                      {{comp}}
+                    {% endfor %}
+                    <button type='submit' class='btn btn-primary input-group-addon' id='submit-btn'> Search </button>
+                  </div>
+                </form>
+              </div>
             </div>
-            {% endfor %}
-          </form>
-        </div>
-        <div class='col-4'>
-          <div class='input-group'>
-            <input type='text' class='form-control' placeholder='access token here' id='access_token' />
-            <button class='btn btn-danger input-group-addon' id="update-btn" title='it should take a while'>
-              Update Archive
-            </button>
+            <div class='row'>
+              <div class='col-12'>
+                <div class='input-group'>
+                  <input type='text' class='form-control' placeholder='access token here' id='access_token' />
+                  <button class='btn btn-danger input-group-addon' id="update-btn" title='it should take a while'>
+                    Update Archive
+                  </button>
+                </div>
+              </div>
+            </div>
           </div>
         </div>
         <div class='col-2'>

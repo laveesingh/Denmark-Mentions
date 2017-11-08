@@ -11,4 +11,15 @@ class Form(forms.Form):
                     }
                 )
             )
+    date = forms.CharField(
+            widget=forms.TextInput(
+                attrs={
+                    'type': 'text',
+                    'class': 'input-group-addon',
+                    'placeholder': 'start date: dd-mm-yyyy',
+                    'title': 'only results after date will be displayed',
+                    'id': 'date'
+                    }
+                )
+            )
 
