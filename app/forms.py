@@ -20,6 +20,15 @@ class Form(forms.Form):
                     'title': 'only results after date will be displayed',
                     'id': 'date'
                     }
-                )
+                ),
+            required=False
             )
-
+    export_to_excel = forms.BooleanField(
+            widget=forms.CheckboxInput(
+                attrs={
+                    'class': 'input-group-addon',
+                    'title': 'check this box if you want to download results',
+                    }
+                ),
+            required=False
+            )
