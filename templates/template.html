@@ -34,8 +34,11 @@
       .input-group{
         margin-top: 10px;
       }
-      #date{
+      .input-group-addon{
         background-color: white;
+      }
+      .alert{
+        margin: 10px;
       }
 
     </style>
@@ -56,15 +59,6 @@
               <div class='col-12'>
                 <form method='post'>
                   {% csrf_token %}
-                  <!--{% for comp in form %}-->
-                  <!--<div class='input-group'>-->
-                    <!--{{ comp }}-->
-                    <!--<input type='text' id='date' -->
-                      <!--class='input-group-addon'-->
-                      <!--placeholder='start date: dd-mm-yyyy' title='only results after date will be displayed'/>-->
-                    <!--<button type='submit' class='btn btn-primary input-group-addon' id='submit-btn'> Search </button>-->
-                  <!--</div>-->
-                  <!--{% endfor %}-->
                   <div class='input-group'>
                     {% for comp in form %}
                       {{comp}}
@@ -72,6 +66,14 @@
                     <button type='submit' class='btn btn-primary input-group-addon' id='submit-btn'> Search </button>
                   </div>
                 </form>
+              </div>
+            </div>
+            <div class='row'>
+              <div class='row-12'>
+                <div class='alert alert-info' role='alert'>
+                  <strong>Date Field:</strong> Enter date in given format to include results after that date only.<br />
+                  <strong>Checkbox:</strong> Tick the checkbox if you want to download results in excel format.
+                </div>
               </div>
             </div>
             <div class='row'>
