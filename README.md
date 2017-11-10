@@ -2,8 +2,6 @@
 ---
 ### A simple social media scraper for Denmark
 
-### Files Description
-
 #### Files Description
 * **yt_channels_list.json:** This file contains a list of youtube channels scraped from [Social Bakers](https://www.socialbakers.com/statistics/youtube/channels/denmark/) in JSON format.
 * **fb_pages_list.json:** This file contains a list of facebook pages scraped from [Social Bakers](https://www.socialbakers.com/statistics/facebook/pages/total/denmark/) in JSON format.
