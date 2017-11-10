@@ -58,9 +58,12 @@ def search(keywords, timestamp):
         nqset = qset & Q(timestamp__gt=timestamp)
     else:
         nqset = qset
-    valid_fb_posts = Fbpost.objects.filter(nqset)
-    valid_fb_comments = Fbcomment.objects.filter(nqset)
-    valid_yt_comments = Ytcomment.objects.filter(nqset)
+    valid_fb_posts = list(Fbpost.objects.filter(nqset))
+    valid_fb_comments = list(Fbcomment.objects.filter(nqset))
+    valid_yt_comments = list(Ytcomment.objects.filter(nqset))
+    sort_by_key_occ(valid_fb_posts, keywords)
+    sort_by_key_occ(valid_fb_comments, keywords)
+    sort_by_key_occ(valid_yt_comments, keywords)
     return {
         'fb_comments': valid_fb_comments,
         'fb_comments_count': len(valid_fb_comments),
@@ -132,3 +135,15 @@ def export_to_excel(keywords, context):
 
     wb.save(response)
     return response
+
+
+def sort_by_key_occ(obj_list, keywords):
+    for i in xrange(len(obj_list)):
+        freq = 0
+        for keyword in keywords:
+            if keyword in obj_list[i].message:
+                freq += 1
+        obj_list[i] = (freq, obj_list[i])
+    obj_list.sort(key=lambda x: x[0], reverse=True)
+    for i in xrange(len(obj_list)):
+        obj_list[i] = obj_list[i][1]
