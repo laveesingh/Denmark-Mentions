@@ -37,8 +37,14 @@ class Fbcomment(models.Model):
         return self.comment_id if self.comment_id else "FBCOMMENT"
 
 
-class ObjectHash(models.Model):
-    hash_value = models.CharField(max_length=100, default="", null=True)
-
+class Tweet(models.Model):
+    tweet_id = models.CharField(max_length=100, default='', null=True)
+    message=models.TextField(default="", null=True)
+    username=models.CharField(max_length=100, default="", null=True)
+    timestamp=models.DateTimeField(unique=False)
+    
     def __repr__(self):
-        return self.hash_value
+        return str(self.tweet_id)
+
+    def __unicode__(self):
+        return str(self.tweet_id)

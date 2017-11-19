@@ -11,8 +11,7 @@ from django.http import HttpResponse, JsonResponse
 
 from facebook_script import scrape_facebook
 from youtube_script import scrape_youtube
-
-from app.models import Ytcomment, Fbpost, Fbcomment, ObjectHash
+from twitter_script import scrape_twitter
 
 
 def update(request):
@@ -33,6 +32,10 @@ def update(request):
         kwargs={
             'access_token': access_token
         }
+    ).start()
+    print('starting twitter thread')
+    threading.Thread(
+        target=scrape_twitter
     ).start()
     return JsonResponse({'msg': 'update in progress'})
 

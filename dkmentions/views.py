@@ -11,7 +11,7 @@ from django.utils import timezone
 from django.http import HttpResponse
 
 from app.forms import Form
-from app.models import Fbcomment, Fbpost, Ytcomment
+from app.models import Fbcomment, Fbpost, Ytcomment, Tweet
 
 
 def main(request):
@@ -32,7 +32,9 @@ def main(request):
             'fb_posts': results['fb_posts'],
             'fb_posts_count': results['fb_posts_count'],
             'yt_comments': results['yt_comments'],
-            'yt_comments_count': results['yt_comments_count']
+            'yt_comments_count': results['yt_comments_count'],
+            'tweets': results['tweets'],
+            'tweets_count': results['tweets_count']
         }
         if export:
             return export_to_excel(keywords, context)
@@ -61,17 +63,22 @@ def search(keywords, timestamp):
     valid_fb_posts = list(Fbpost.objects.filter(nqset))
     valid_fb_comments = list(Fbcomment.objects.filter(nqset))
     valid_yt_comments = list(Ytcomment.objects.filter(nqset))
+    valid_tweets = list(Tweet.objects.filter(nqset))
     sort_by_key_occ(valid_fb_posts, keywords)
     sort_by_key_occ(valid_fb_comments, keywords)
     sort_by_key_occ(valid_yt_comments, keywords)
+    sort_by_key_occ(valid_tweets, keywords)
     return {
         'fb_comments': valid_fb_comments,
         'fb_comments_count': len(valid_fb_comments),
         'fb_posts': valid_fb_posts,
         'fb_posts_count': len(valid_fb_posts),
         'yt_comments': valid_yt_comments,
-        'yt_comments_count': len(valid_yt_comments)
+        'yt_comments_count': len(valid_yt_comments),
+        'tweets': valid_tweets,
+        'tweets_count': len(valid_tweets)
     }
+
 
 def export_to_excel(keywords, context):
     response = HttpResponse(content_type='application/ms-excel')
@@ -131,6 +138,21 @@ def export_to_excel(keywords, context):
         ws.write(row_num, 2, str(comment.timestamp), font)
         ws.write(row_num, 3, comment.video, font)
         ws.write(row_num, 4, comment.message, font)
+        row_num += 1
+
+    row_num += 1
+    ws.write(row_num, 0, 'Tweets', bold_font)
+    ws.write(row_num, 1, context['tweets_count'], bold_font)
+    row_num += 1
+    cols = ['id', 'username', 'timestamp', 'tweet']
+    for col_num in xrange(len(cols)):
+        ws.write(row_num, col_num, cols[col_num], bold_font)
+    row_num += 1
+    for tweet in context['tweets']:
+        ws.write(row_num, 0, tweet.tweet_id, font)
+        ws.write(row_num, 1, tweet.username, font)
+        ws.write(row_num, 2, tweet.timestamp, font)
+        ws.write(row_num, 3, tweet.message, font)
         row_num += 1
 
     wb.save(response)
