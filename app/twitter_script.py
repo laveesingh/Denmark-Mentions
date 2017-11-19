@@ -1,6 +1,8 @@
+from __future__ import print_function
 import tweepy
 import os
 import json
+import random
 
 from app.models import Tweet
 
@@ -11,6 +13,10 @@ consumer_secret = 'Uvaa3T5xuy6qsAJ3YLON5qOM42ACXxhjB9Xyo0COfiVeC3cXwZ'
 token = '732728148-mneIJp9gAxHpzln28mpPcgIQpB2iVFVoB7vp6wsx'
 token_secret = 'iomDBUPBrlDkMHflhMVNivbyygobhx7OdeGFPkkg4Sqd3'
 
+f = open('twitter.log', 'w', 0)
+
+def inline_log(msg):
+    print(msg, end=' ', file=f)
 
 def fetch_tweets_list(api, userid):
     for pageno in xrange(1, 1000):
@@ -21,12 +27,16 @@ def fetch_tweets_list(api, userid):
             message = tweet.text
             timestamp = tweet.created_at
             tweet_id = tweet.id
+            if Tweet.objects.filter(tweet_id=tweet_id):
+                inline_log('^')
+                continue
             Tweet.objects.create(
                 tweet_id=tweet_id,
                 message=message,
                 username=user,
                 timestamp=timestamp
             )
+            inline_log('>')
 
 def scrape_twitter():
     auth = tweepy.OAuthHandler(consumer_key, consumer_secret)
@@ -38,7 +48,7 @@ def scrape_twitter():
         dump_to_file()
     json_data = open('tw_users_list.json', 'r').read()
     users_list = json.loads(json_data)['tw_users_list']
-    print "%d long list of twitter users found" % len(users_list)
+    random.shuffle(users_list)
     for userid in users_list:
         fetch_tweets_list(api, userid)
     
