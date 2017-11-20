@@ -21,7 +21,8 @@ def main(request):
             keywords = form.cleaned_data.get('keywords')
             timestamp = form.cleaned_data.get('date')
             export = form.cleaned_data.get('export_to_excel')
-            results = search(keywords, timestamp)
+            ids = form.cleaned_data.get('ids').split()
+            results = search(keywords, timestamp, ids)
         else:
             results = defaultdict(int)
             keywords = "ERROR!!!"
@@ -45,25 +46,45 @@ def main(request):
         'form': form
     })
 
-def search(keywords, timestamp):
+def search(keywords, timestamp, ids):
     keywords = keywords.split()
     if timestamp:
         time_tuple = datetime.datetime.strptime(timestamp, '%d-%m-%Y').timetuple()
         timestamp = time.mktime(time_tuple)
         timestamp = datetime.datetime.fromtimestamp(timestamp)
         timestamp = timezone.make_aware(timestamp)
-        print "timestamp:", timestamp
     qset = Q()
     for keyword in keywords:
         qset |= Q(message__icontains=keyword)
     if timestamp:
-        nqset = qset & Q(timestamp__gt=timestamp)
+        qset1 = qset & Q(timestamp__gt=timestamp)
     else:
-        nqset = qset
-    valid_fb_posts = list(Fbpost.objects.filter(nqset))
-    valid_fb_comments = list(Fbcomment.objects.filter(nqset))
-    valid_yt_comments = list(Ytcomment.objects.filter(nqset))
-    valid_tweets = list(Tweet.objects.filter(nqset))
+        qset1 = qset
+    fbc = Q()
+    fbp = Q()
+    ytc = Q()
+    twt = Q()
+    if ids:
+        # TODO this needs to be erased new userid field should be added so as to enable filter
+        for _id in ids:
+            fbc |= Q(page_id=_id)
+            fbc |= Q(user_id=_id)
+            fbp |= Q(post_id=_id)
+            fbp |= Q(page_id=_id)
+            ytc |= Q(video_id=_id)
+            ytc |= Q(channel_id=_id)
+            twt |= Q(user_id=_id)
+
+    valid_fb_posts = Fbpost.objects.filter(qset1 & fbp)
+    valid_fb_comments = Fbcomment.objects.filter(qset1 & fbc)
+    valid_yt_comments = Ytcomment.objects.filter(qset1 & ytc)
+    valid_tweets = Tweet.objects.filter(qset1 & twt)
+
+    valid_fb_posts = list(valid_fb_posts)
+    valid_fb_comments = list(valid_fb_comments)
+    valid_yt_comments = list(valid_yt_comments)
+    valid_tweets = list(valid_tweets)
+
     sort_by_key_occ(valid_fb_posts, keywords)
     sort_by_key_occ(valid_fb_comments, keywords)
     sort_by_key_occ(valid_yt_comments, keywords)

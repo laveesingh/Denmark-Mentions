@@ -4,6 +4,8 @@ from django.db import models
 
 
 class Ytcomment(models.Model):
+    channel_id = models.CharField(max_length=100, default='', null=True)
+    video_id = models.CharField(max_length=100, default='', null=True)
     comment_id = models.CharField(max_length=100, default='', null=True)
     message = models.TextField(default="", null=True)
     username = models.CharField(max_length=100, default="", null=True)
@@ -12,6 +14,7 @@ class Ytcomment(models.Model):
 
 
 class Fbpost(models.Model):
+    page_id = models.CharField(max_length=100, default='', null=True)
     post_id = models.CharField(max_length=100, default='', null=True)
     message = models.TextField(default="", null=True)
     pagename = models.CharField(max_length=100, default="", null=True)
@@ -25,7 +28,10 @@ class Fbpost(models.Model):
 
 
 class Fbcomment(models.Model):
+    page_id = models.CharField(max_length=100, default='', null=True)
     comment_id = models.CharField(max_length=100, default='', null=True)
+    post_id = models.CharField(max_length=100, default='', null=True)
+    user_id = models.CharField(max_length=100, default='', null=True)
     message = models.TextField(default="", null=True)
     username = models.CharField(max_length=100, default="", null=True)
     timestamp = models.DateTimeField(unique=False)
@@ -38,6 +44,7 @@ class Fbcomment(models.Model):
 
 
 class Tweet(models.Model):
+    user_id = models.CharField(max_length=100, default='', null=True)
     tweet_id = models.CharField(max_length=100, default='', null=True)
     message=models.TextField(default="", null=True)
     username=models.CharField(max_length=100, default="", null=True)

@@ -27,26 +27,33 @@ def fetch_tweets_list(api, userid):
             message = tweet.text
             timestamp = tweet.created_at
             tweet_id = tweet.id
-            if Tweet.objects.filter(tweet_id=tweet_id):
-                inline_log('^')
+            qset = Tweet.objects.filter(tweet_id=tweet_id)
+            if qset:
+                try:
+                    instance = qset.first()
+                    instance.user_id = userid
+                    instance.save()
+                    inline_log('-+')
+                except:
+                    inline_log('-?')
                 continue
-            Tweet.objects.create(
-                tweet_id=tweet_id,
-                message=message,
-                username=user,
-                timestamp=timestamp
-            )
-            inline_log('>')
+            try:
+                Tweet.objects.create(
+                    user_id=userid,
+                    tweet_id=tweet_id,
+                    message=message,
+                    username=user,
+                    timestamp=timestamp
+                )
+                inline_log('++')
+            except:
+                inline_log('+?')
 
 def scrape_twitter():
     auth = tweepy.OAuthHandler(consumer_key, consumer_secret)
     auth.set_access_token(token, token_secret)
     api = tweepy.API(auth)
-    if os.path.isfile('tw_users_list.json'):
-        pass
-    else:
-        dump_to_file()
-    json_data = open('tw_users_list.json', 'r').read()
+    json_data = open('archive/tw_users_list.json', 'r').read()
     users_list = json.loads(json_data)['tw_users_list']
     random.shuffle(users_list)
     for userid in users_list:

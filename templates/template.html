@@ -31,6 +31,9 @@
       .btn-primary{
         background-color: #428bca;
       }
+      .btn-info{
+        background-color: #5bc0de;
+      }
       .input-group{
         margin-top: 10px;
       }
@@ -69,10 +72,12 @@
               </div>
             </div>
             <div class='row'>
-              <div class='row-12'>
+              <div class='col-12'>
                 <div class='alert alert-info' role='alert'>
+                  <strong>Search Keywords:</strong> Enter keywords to find social media occurrences.<br/>
                   <strong>Date Field:</strong> Enter date in given format to include results after that date only.<br />
-                  <strong>Checkbox:</strong> Tick the checkbox if you want to download results in excel format.
+                  <strong>Checkbox:</strong> Tick the checkbox if you want to download results in excel format.<br/>
+                  <strong>IDs:</strong> Space separated list of IDs to restrict results to include specific ids. An id can be facebook page_id, user_id; youtube channel_id, video_id; twitter user_id etc.
                 </div>
               </div>
             </div>
@@ -88,21 +93,20 @@
             </div>
           </div>
         </div>
-        <div class='col-2'>
-        </div>
+        <div class='col-2'> </div>
       </div>
       <a name='fb-comments-section'></a>
       {% if fb_comments %}
-      <div class='row' style='margin-top: 10px'>
-        <div class='col-2'></div>
-        <div class='col-8'>
-          <a class='btn btn-primary' href='#fb-comments-section'>FB Comments({{fb_comments_count}})</a>
-          <a class='btn btn-primary' href='#fb-post-section'>FB Posts({{fb_posts_count}})</a>
-          <a class='btn btn-danger' href='#yt-comments-section'>YT Posts({{yt_comments_count}})</a>
-          <a class='btn btn-info' href='#tweets-section'>Tweets({{tweets_count}})</a>
+        <div class='row' style='margin-top: 10px'>
+          <div class='col-2'></div>
+          <div class='col-8'>
+            <a class='btn btn-primary' href='#fb-comments-section'>FB Comments({{fb_comments_count}})</a>
+            <a class='btn btn-primary' href='#fb-post-section'>FB Posts({{fb_posts_count}})</a>
+            <a class='btn btn-danger' href='#yt-comments-section'>YT Posts({{yt_comments_count}})</a>
+            <a class='btn btn-info' href='#tweets-section'>Tweets({{tweets_count}})</a>
+          </div>
+          <div class='col-2'></div>
         </div>
-        <div class='col-2'></div>
-      </div>
         <div class='row' style='margin-top: 10px'>
           <div class='col-2'> </div>
           <div class='col-8'>
@@ -112,12 +116,26 @@
                 {% for comment in fb_comments %}
                   <div class='card' style='width: 22rem; margin: 5px;'>
                     <div class='card-header btn-primary'>
-                      <span>Facebook Comment (id: {{comment.comment_id}})</span>
+                      <span>Facebook Comment 
+                        {% if comment.comment_id %}
+                          ({{comment.comment_id}})
+                        {% endif %}
+                      </span>
                     </div>
                     <div class='card-block'>
-                      <h4 class='card-title'>{{comment.username}}</h4>
-                      <h6 class='card-subtitle mb-2 text-muted'>{{comment.timestamp}}</h6>
-                      <p class='card-text'>{{comment.message}}</p>
+                      <h6 class='card-title'>User: {{comment.username}} 
+                        {% if comment.user_id %}
+                          ({{comment.user_id}})
+                        {% endif %}
+                      </h6>
+                      <h6 class='card-subtitle mb-2 text-muted'>Timestamp: {{comment.timestamp}}</h6>
+                      {% if comment.page_id %}
+                        <h6 class='card-subtitle mb-2 text-muted'>Page: {{comment.page_id}}</h6>
+                      {% endif %}
+                      <hr>
+                      <p class='card-text'>
+                        {{comment.message}}
+                      </p>
                     </div>
                   </div>
                 {% endfor %}
@@ -129,67 +147,78 @@
       {% endif %}
       <a name='fb-post-section'></a>
       {% if fb_posts %}
-      <div class='row' style='margin-top: 10px'>
-        <div class='col-2'></div>
-        <div class='col-8'>
-          <a class='btn btn-primary' href='#fb-comments-section'>FB Comments({{fb_comments_count}})</a>
-          <a class='btn btn-primary' href='#fb-post-section'>FB Posts({{fb_posts_count}})</a>
-          <a class='btn btn-danger' href='#yt-comments-section'>YT Posts({{yt_comments_count}})</a>
-          <a class='btn btn-info' href='#tweets-section'>Tweets({{tweets_count}})</a>
-        </div>
-        <div class='col-2'></div>
-      </div>
         <div class='row' style='margin-top: 10px'>
-          <div class='col-2'> </div>
+          <div class='col-2'></div>
           <div class='col-8'>
-            <div class='container'>
-              <div class='row'>
-                <div class='bg-info round container col-12'>Total occurrences: {{ fb_posts_count }}, displaying at most 100. </div> <br />
-                {% for post in fb_posts %}
-                  <div class='card' style='width: 22rem; margin: 5px;'>
-                    <div class='card-header btn-primary'>
-                      <span>Facebook Post (id: {{post.post_id}})</span>
+            <a class='btn btn-primary' href='#fb-comments-section'>FB Comments({{fb_comments_count}})</a>
+            <a class='btn btn-primary' href='#fb-post-section'>FB Posts({{fb_posts_count}})</a>
+            <a class='btn btn-danger' href='#yt-comments-section'>YT Posts({{yt_comments_count}})</a>
+            <a class='btn btn-info' href='#tweets-section'>Tweets({{tweets_count}})</a>
+          </div>
+          <div class='col-2'></div>
+        </div>
+          <div class='row' style='margin-top: 10px'>
+            <div class='col-2'> </div>
+            <div class='col-8'>
+              <div class='container'>
+                <div class='row'>
+                  <div class='bg-info round container col-12'>Total occurrences: {{ fb_posts_count }}, displaying at most 100. </div> <br />
+                  {% for post in fb_posts %}
+                    <div class='card' style='width: 22rem; margin: 5px;'>
+                      <div class='card-header btn-primary'>
+                        <span>Facebook Post 
+                          {% if post.post_id %}
+                            ({{post.post_id}})
+                          {% endif %}
+                        </span>
+                      </div>
+                      <div class='card-block'>
+                        <h4 class='card-title'>Page: {{post.pagename}}
+                          {% if post.page_id %}
+                            ({{post.page_id}})
+                          {% endif %}
+                        </h4>
+                        <h6 class='card-subtitle mb-2 text-muted'>Timestamp: {{post.timestamp}}</h6>
+                        <hr>
+                        <p class='card-text'>{{post.message}}</p>
+                      </div>
                     </div>
-                    <div class='card-block'>
-                      <h4 class='card-title'>{{post.pagename}}</h4>
-                      <h6 class='card-subtitle mb-2 text-muted'>{{post.timestamp}}</h6>
-                      <p class='card-text'>{{post.message}}</p>
-                    </div>
-                  </div>
-                {% endfor %}
+                  {% endfor %}
+                </div>
               </div>
             </div>
+            <div class='col-2'> </div>
           </div>
-          <div class='col-2'> </div>
-        </div>
       {% endif %}
       <a name='yt-comments-section'></a>
       {% if yt_comments %}
-      <div class='row' style='margin-top: 10px'>
-        <div class='col-2'></div>
-        <div class='col-8'>
-          <a class='btn btn-primary' href='#fb-comments-section'>FB Comments({{fb_comments_count}})</a>
-          <a class='btn btn-primary' href='#fb-post-section'>FB Posts({{fb_posts_count}})</a>
-          <a class='btn btn-danger' href='#yt-comments-section'>YT Posts({{yt_comments_count}})</a>
-          <a class='btn btn-info' href='#tweets-section'>Tweets({{tweets_count}})</a>
+        <div class='row' style='margin-top: 10px'>
+          <div class='col-2'></div>
+          <div class='col-8'>
+            <a class='btn btn-primary' href='#fb-comments-section'>FB Comments({{fb_comments_count}})</a>
+            <a class='btn btn-primary' href='#fb-post-section'>FB Posts({{fb_posts_count}})</a>
+            <a class='btn btn-danger' href='#yt-comments-section'>YT Posts({{yt_comments_count}})</a>
+            <a class='btn btn-info' href='#tweets-section'>Tweets({{tweets_count}})</a>
+          </div>
+          <div class='col-2'></div>
         </div>
-        <div class='col-2'></div>
-      </div>
         <div class='row' style='margin-top: 10px'>
           <div class='col-2'> </div>
           <div class='col-8'>
-            <div class='container'>
+            <div class='container-fluid'>
               <div class='row'>
                 <div class='bg-info round container col-12'>Total occurrences: {{ yt_comments_count }}, displaying at most 100. </div> <br />
                 {% for comment in yt_comments %}
                   <div class='card' style='width: 22rem; margin: 5px;'>
                     <div class='card-header btn-danger'>
-                      <span>Youtube Comment (id: {{comment.comment_id}})</span>
+                      <span>Youtube Comment ({{comment.comment_id}})</span>
                     </div>
                     <div class='card-block'>
-                      <h4 class='card-title'>{{comment.username}}</h4>
+                      <h6 class='card-title'>User: {{comment.username}}</h6>
+                      <h6 class='card-subtitle mb-2 text-muted'>channel: {{comment.channel_id}}</h6>
                       <h6 class='card-subtitle mb-2 text-muted'>{{comment.timestamp}}</h6>
-                      <h5>Video: {{comment.video}}<h5>
+                      <h6>Video: {{comment.video}}({{comment.video_id}})</h6>
+                      <hr>
                       <p class='card-text'>{{comment.message}}</p>
                     </div>
                   </div>
@@ -202,16 +231,16 @@
       {% endif %}
       <a name='tweets-section'></a>
       {% if tweets %}
-      <div class='row' style='margin-top: 10px'>
-        <div class='col-2'></div>
-        <div class='col-8'>
-          <a class='btn btn-primary' href='#fb-comments-section'>FB Comments({{fb_comments_count}})</a>
-          <a class='btn btn-primary' href='#fb-post-section'>FB Posts({{fb_posts_count}})</a>
-          <a class='btn btn-danger' href='#yt-comments-section'>YT Posts({{yt_comments_count}})</a>
-          <a class='btn btn-info' href='#tweets-section'>Tweets({{tweets_count}})</a>
+        <div class='row' style='margin-top: 10px'>
+          <div class='col-2'></div>
+          <div class='col-8'>
+            <a class='btn btn-primary' href='#fb-comments-section'>FB Comments({{fb_comments_count}})</a>
+            <a class='btn btn-primary' href='#fb-post-section'>FB Posts({{fb_posts_count}})</a>
+            <a class='btn btn-danger' href='#yt-comments-section'>YT Posts({{yt_comments_count}})</a>
+            <a class='btn btn-info' href='#tweets-section'>Tweets({{tweets_count}})</a>
+          </div>
+          <div class='col-2'></div>
         </div>
-        <div class='col-2'></div>
-      </div>
         <div class='row' style='margin-top: 10px'>
           <div class='col-2'> </div>
           <div class='col-8'>
@@ -221,11 +250,12 @@
                 {% for tweet in tweets %}
                   <div class='card' style='width: 22rem; margin: 5px;'>
                     <div class='card-header btn-info'>
-                      <span>Tweet (id: {{tweet.tweet_id}})</span>
+                      <span>Tweet ({{tweet.tweet_id}})</span>
                     </div>
                     <div class='card-block'>
-                      <h4 class='card-title'>{{tweet.username}}</h4>
-                      <h6 class='card-subtitle mb-2 text-muted'>{{tweet.timestamp}}</h6>
+                      <h4 class='card-title'>User: {{tweet.username}}({{  tweet.user_id }})</h4>
+                      <h6 class='card-subtitle mb-2 text-muted'>Timestamp: {{tweet.timestamp}}</h6>
+                      <hr>
                       <p class='card-text'>{{tweet.message}}</p>
                     </div>
                   </div>
@@ -239,5 +269,6 @@
     </div>
     {% load staticfiles %}
     <script src="{% static 'main.js' %}"></script>
+
   </body>
 </html>

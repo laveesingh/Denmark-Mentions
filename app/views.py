@@ -9,9 +9,9 @@ import json
 from django.shortcuts import render
 from django.http import HttpResponse, JsonResponse
 
-from facebook_script import scrape_facebook
-from youtube_script import scrape_youtube
-from twitter_script import scrape_twitter
+from scripts.facebook_script import scrape_facebook
+from scripts.youtube_script import scrape_youtube
+from scripts.twitter_script import scrape_twitter
 
 
 def update(request):
