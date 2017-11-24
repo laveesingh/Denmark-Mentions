@@ -172,7 +172,7 @@ def export_to_excel(keywords, context):
     for tweet in context['tweets']:
         ws.write(row_num, 0, tweet.tweet_id, font)
         ws.write(row_num, 1, tweet.username, font)
-        ws.write(row_num, 2, tweet.timestamp, font)
+        ws.write(row_num, 2, str(tweet.timestamp), font)
         ws.write(row_num, 3, tweet.message, font)
         row_num += 1
 
