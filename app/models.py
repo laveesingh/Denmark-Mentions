@@ -51,7 +51,7 @@ class Tweet(models.Model):
     timestamp=models.DateTimeField(unique=False)
     
     def __repr__(self):
-        return str(self.tweet_id)
+        return str(self.tweet_id) + ': ' + str(self.timestamp)
 
     def __unicode__(self):
-        return str(self.tweet_id)
+        return str(self.tweet_id) + ': ' + str(self.timestamp)
