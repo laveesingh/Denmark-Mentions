@@ -23,6 +23,23 @@ def main(request):
             export = form.cleaned_data.get('export_to_excel')
             ids = form.cleaned_data.get('ids').split()
             results = search(keywords, timestamp, ids)
+            # inject html to highlight occurrences
+            for i in xrange(len(results['fb_comments'])):
+                for keyword in keywords.split():
+                    results['fb_comments'][i].message = results['fb_comments'][i].message.lower().replace(keyword.lower(), 
+                            '<span style="background-color: yellow; ">'+keyword+'</span>')
+            for i in xrange(len(results['fb_posts'])):
+                for keyword in keywords.split():
+                    results['fb_posts'][i].message = results['fb_posts'][i].message.lower().replace(keyword.lower(), 
+                            '<span style="background-color: yellow; ">'+keyword+'</span>')
+            for i in xrange(len(results['yt_comments'])):
+                for keyword in keywords.split():
+                    results['yt_comments'][i].message = results['yt_comments'][i].message.lower().replace(keyword.lower(), 
+                            '<span style="background-color: yellow; ">'+keyword+'</span>')
+            for i in xrange(len(results['tweets'])):
+                for keyword in keywords.split():
+                    results['tweets'][i].message = results['tweets'][i].message.lower().replace(keyword.lower(), 
+                            '<span style="background-color: yellow; ">'+keyword+'</span>')
         else:
             results = defaultdict(int)
             keywords = "ERROR!!!"
