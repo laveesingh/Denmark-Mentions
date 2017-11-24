@@ -146,7 +146,7 @@
                       {% endif %}
                       <hr>
                       <p class='card-text'>
-                        {{comment.message}}
+                      {{comment.message|safe}}
                       </p>
                     </div>
                   </div>
@@ -192,7 +192,7 @@
                         </h4>
                         <h6 class='card-subtitle mb-2 text-muted'>Timestamp: {{post.timestamp}}</h6>
                         <hr>
-                        <p class='card-text'>{{post.message}}</p>
+                        <p class='card-text'>{{post.message|safe}}</p>
                       </div>
                     </div>
                   {% endfor %}
@@ -231,7 +231,7 @@
                       <h6 class='card-subtitle mb-2 text-muted'>{{comment.timestamp}}</h6>
                       <h6>Video: {{comment.video}}({{comment.video_id}})</h6>
                       <hr>
-                      <p class='card-text'>{{comment.message}}</p>
+                      <p class='card-text'>{{comment.message|safe}}</p>
                     </div>
                   </div>
                 {% endfor %}
@@ -268,7 +268,7 @@
                       <h4 class='card-title'>User: {{tweet.username}}({{  tweet.user_id }})</h4>
                       <h6 class='card-subtitle mb-2 text-muted'>Timestamp: {{tweet.timestamp}}</h6>
                       <hr>
-                      <p class='card-text'>{{tweet.message}}</p>
+                      <p class='card-text'>{{tweet.message|safe}}</p>
                     </div>
                   </div>
                 {% endfor %}
