@@ -7,7 +7,16 @@ class Form(forms.Form):
                 attrs={
                     'type': 'text',
                     'class': 'form-control',
-                    'placeholder': 'enter your search keywords...'
+                    'placeholder': 'enter comma separated search keywords'
+                    }
+                )
+            )
+    users = forms.CharField(
+            widget=forms.TextInput(
+                attrs={
+                    'type': 'text',
+                    'class': 'form-control',
+                    'placeholder': 'enter comma separated usernames/userids to filter results'
                     }
                 )
             )
@@ -15,7 +24,7 @@ class Form(forms.Form):
             widget=forms.TextInput(
                 attrs={
                     'type': 'text',
-                    'class': 'input-group-addon',
+                    'class': 'form-control',
                     'placeholder': 'start date: dd-mm-yyyy',
                     'title': 'only results after date will be displayed',
                     'id': 'date'
@@ -23,22 +32,10 @@ class Form(forms.Form):
                 ),
             required=False
             )
-    ids = forms.CharField(
-            widget=forms.TextInput(
-                attrs={
-                    'type': 'text',
-                    'class': 'form-control',
-                    'placeholder': 'IDs',
-                    'title': 'space separated ids to limit results',
-                    'id': 'ids'
-                    }
-                ),
-            required=False
-            )
     export_to_excel = forms.BooleanField(
             widget=forms.CheckboxInput(
                 attrs={
-                    'class': 'input-group-addon',
+                    'class': '',
                     'title': 'check this box if you want to download results',
                     }
                 ),

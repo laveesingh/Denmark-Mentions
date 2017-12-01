@@ -72,14 +72,35 @@
           <div class='container'>
             <div class='row'>
               <div class='col-12'>
-                <form method='post'>
+                <form method='post' action='.'>
                   {% csrf_token %}
-                  <div class='input-group'>
-                    {% for comp in form %}
-                      {{comp}}
-                    {% endfor %}
-                    <button type='submit' class='btn btn-primary input-group-addon' id='submit-btn'> Search </button>
+                  <div class='form-group row'>
+                    <label for='keywords' class='col-2 col-form-label'> Keywords</label>
+                    <div class='col-10'>
+                      <input class='form-control' type='text' placeholder='enter comma separated search keywords' name='keywords' id='keywords'>
+                    </div>
                   </div>
+                  <div class='form-group row'>
+                    <label for='users' class='col-2 col-form-label'>Users</label>
+                    <div class='col-10'>
+                      <input class='form-control' type='text' placeholder='enter comma separated usernames/userids to filter results' name='users' id='users'>
+                    </div>
+                  </div>
+                  <div class='form-group row'>
+                    <label for='date' class='col-2 col-form-label'>Date</label>
+                    <div class='col-10'>
+                      <input class='form-control' type='text' placeholder='start date: dd-mm-yyyy' name='date' id='date'> 
+                    </div>
+                  </div>
+
+                  <div class='form-check'>
+                    <label for='excel' class='form-check-label'>
+                    <input class='form-check-input' type='checkbox' placeholder='check for exporting to excel' name='export_to_excel' id='excel'/>
+                    Download results as excel
+                    </label>
+                  </div>
+
+                  <button type='submit' class='btn btn-primary' id='submit-btn' style='width: 100%'> Search </button>
                 </form>
               </div>
             </div>
@@ -112,10 +133,10 @@
         <div class='row' style='margin-top: 10px'>
           <div class='col-2'></div>
           <div class='col-8'>
-            <a class='btn btn-primary' href='#fb-comments-section'>FB Comments({{fb_comments_count}})</a>
-            <a class='btn btn-primary' href='#fb-post-section'>FB Posts({{fb_posts_count}})</a>
-            <a class='btn btn-danger' href='#yt-comments-section'>YT Posts({{yt_comments_count}})</a>
-            <a class='btn btn-info' href='#tweets-section'>Tweets({{tweets_count}})</a>
+            <a class='col-3 btn btn-primary' href='#fb-comments-section'>FB Comments({{fb_comments_count}})</a>
+            <a class='col-3 btn btn-primary' href='#fb-post-section'>FB Posts({{fb_posts_count}})</a>
+            <a class='col-3 btn btn-danger' href='#yt-comments-section'>YT Posts({{yt_comments_count}})</a>
+            <a class='col-2 btn btn-info' href='#tweets-section'>Tweets({{tweets_count}})</a>
           </div>
           <div class='col-2'></div>
         </div>
@@ -162,10 +183,10 @@
         <div class='row' style='margin-top: 10px'>
           <div class='col-2'></div>
           <div class='col-8'>
-            <a class='btn btn-primary' href='#fb-comments-section'>FB Comments({{fb_comments_count}})</a>
-            <a class='btn btn-primary' href='#fb-post-section'>FB Posts({{fb_posts_count}})</a>
-            <a class='btn btn-danger' href='#yt-comments-section'>YT Posts({{yt_comments_count}})</a>
-            <a class='btn btn-info' href='#tweets-section'>Tweets({{tweets_count}})</a>
+            <a class='col-3 btn btn-primary' href='#fb-comments-section'>FB Comments({{fb_comments_count}})</a>
+            <a class='col-3 btn btn-primary' href='#fb-post-section'>FB Posts({{fb_posts_count}})</a>
+            <a class='col-3 btn btn-danger' href='#yt-comments-section'>YT Posts({{yt_comments_count}})</a>
+            <a class='col-2 btn btn-info' href='#tweets-section'>Tweets({{tweets_count}})</a>
           </div>
           <div class='col-2'></div>
         </div>
@@ -185,9 +206,9 @@
                         </span>
                       </div>
                       <div class='card-block'>
-                        <h4 class='card-title'>Page: {{post.pagename}}
-                          {% if post.page_id %}
-                            ({{post.page_id}})
+                        <h4 class='card-title'>Page: {{post.username}}
+                          {% if post.user_id %}
+                            ({{post.user_id}})
                           {% endif %}
                         </h4>
                         <h6 class='card-subtitle mb-2 text-muted'>Timestamp: {{post.timestamp}}</h6>
@@ -207,10 +228,10 @@
         <div class='row' style='margin-top: 10px'>
           <div class='col-2'></div>
           <div class='col-8'>
-            <a class='btn btn-primary' href='#fb-comments-section'>FB Comments({{fb_comments_count}})</a>
-            <a class='btn btn-primary' href='#fb-post-section'>FB Posts({{fb_posts_count}})</a>
-            <a class='btn btn-danger' href='#yt-comments-section'>YT Posts({{yt_comments_count}})</a>
-            <a class='btn btn-info' href='#tweets-section'>Tweets({{tweets_count}})</a>
+            <a class='col-3 btn btn-primary' href='#fb-comments-section'>FB Comments({{fb_comments_count}})</a>
+            <a class='col-3 btn btn-primary' href='#fb-post-section'>FB Posts({{fb_posts_count}})</a>
+            <a class='col-3 btn btn-danger' href='#yt-comments-section'>YT Posts({{yt_comments_count}})</a>
+            <a class='col-2 btn btn-info' href='#tweets-section'>Tweets({{tweets_count}})</a>
           </div>
           <div class='col-2'></div>
         </div>
@@ -246,10 +267,10 @@
         <div class='row' style='margin-top: 10px'>
           <div class='col-2'></div>
           <div class='col-8'>
-            <a class='btn btn-primary' href='#fb-comments-section'>FB Comments({{fb_comments_count}})</a>
-            <a class='btn btn-primary' href='#fb-post-section'>FB Posts({{fb_posts_count}})</a>
-            <a class='btn btn-danger' href='#yt-comments-section'>YT Posts({{yt_comments_count}})</a>
-            <a class='btn btn-info' href='#tweets-section'>Tweets({{tweets_count}})</a>
+            <a class='col-3 btn btn-primary' href='#fb-comments-section'>FB Comments({{fb_comments_count}})</a>
+            <a class='col-3 btn btn-primary' href='#fb-post-section'>FB Posts({{fb_posts_count}})</a>
+            <a class='col-3 btn btn-danger' href='#yt-comments-section'>YT Posts({{yt_comments_count}})</a>
+            <a class='col-2 btn btn-info' href='#tweets-section'>Tweets({{tweets_count}})</a>
           </div>
           <div class='col-2'></div>
         </div>
@@ -265,7 +286,7 @@
                       <span>Tweet ({{tweet.tweet_id}})</span>
                     </div>
                     <div class='card-block'>
-                      <h4 class='card-title'>User: {{tweet.username}}({{  tweet.user_id }})</h4>
+                      <h6 class='card-title'>User: {{tweet.username}} ({{  tweet.user_id }})</h6>
                       <h6 class='card-subtitle mb-2 text-muted'>Timestamp: {{tweet.timestamp}}</h6>
                       <hr>
                       <p class='card-text'>{{tweet.message|safe}}</p>

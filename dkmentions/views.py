@@ -1,9 +1,11 @@
 # -*- coding: utf-8 -*-
 
 from collections import defaultdict
+from operator import and_, or_
 import time
 import datetime
 import xlwt
+import re
 
 from django.shortcuts import render
 from django.db.models import Q
@@ -12,95 +14,64 @@ from django.http import HttpResponse
 
 from app.forms import Form
 from app.models import Fbcomment, Fbpost, Ytcomment, Tweet
+from app.utils import export_to_excel
+from app.utils import sort_by_key_occ
+from app.utils import highlight_occurrences
+from app.utils import extract_search_elements
+from app.utils import validate_timestamp
+from app.utils import fetch_filters
 
 
 def main(request):
     if request.method == 'POST':
         form = Form(request.POST)
-        if form.is_valid():
-            keywords = form.cleaned_data.get('keywords')
-            timestamp = form.cleaned_data.get('date')
-            export = form.cleaned_data.get('export_to_excel')
-            ids = form.cleaned_data.get('ids').split()
-            results = search(keywords, timestamp, ids)
-            # inject html to highlight occurrences
-            for i in xrange(len(results['fb_comments'])):
-                for keyword in keywords.split():
-                    results['fb_comments'][i].message = results['fb_comments'][i].message.lower().replace(keyword.lower(), 
-                            '<span style="background-color: yellow; ">'+keyword+'</span>')
-            for i in xrange(len(results['fb_posts'])):
-                for keyword in keywords.split():
-                    results['fb_posts'][i].message = results['fb_posts'][i].message.lower().replace(keyword.lower(), 
-                            '<span style="background-color: yellow; ">'+keyword+'</span>')
-            for i in xrange(len(results['yt_comments'])):
-                for keyword in keywords.split():
-                    results['yt_comments'][i].message = results['yt_comments'][i].message.lower().replace(keyword.lower(), 
-                            '<span style="background-color: yellow; ">'+keyword+'</span>')
-            for i in xrange(len(results['tweets'])):
-                for keyword in keywords.split():
-                    results['tweets'][i].message = results['tweets'][i].message.lower().replace(keyword.lower(), 
-                            '<span style="background-color: yellow; ">'+keyword+'</span>')
-        else:
-            results = defaultdict(int)
-            keywords = "ERROR!!!"
-        context = {
-            'form': form,
-            'fb_comments': results['fb_comments'],
-            'fb_comments_count': results['fb_comments_count'],
-            'fb_posts': results['fb_posts'],
-            'fb_posts_count': results['fb_posts_count'],
-            'yt_comments': results['yt_comments'],
-            'yt_comments_count': results['yt_comments_count'],
-            'tweets': results['tweets'],
-            'tweets_count': results['tweets_count']
-        }
+        form.is_valid()
+        keywords = form.cleaned_data.get('keywords')
+        users = form.cleaned_data.get('users')
+        if not keywords and not users:
+            return HttpResponse(
+                    '''No input field specified!!! <a href='/'>Go Back</a>'''
+                    )
+        keywords, users = extract_search_elements(keywords if keywords else '', users if users else '')
+        if not keywords and not users:
+            return HttpResponse(
+                    '''Something wrong with input!!! <a href='/'>Go Back</a>'''
+                    )
+        timestamp = form.cleaned_data.get('date')
+        export = form.cleaned_data.get('export_to_excel')
+        results = search(keywords, users, timestamp)
+        highlight_occurrences(' '.join(keywords), results)
+        context = dict(results)
+        context['form'] = form
         if export:
             return export_to_excel(keywords, context)
-        # print('context:', context)
         return render(request, 'template.html', context)
     form = Form()
     return render(request, 'template.html', {
         'form': form
     })
 
-def search(keywords, timestamp, ids):
-    keywords = keywords.split()
+def search(keywords, users, timestamp):
     if timestamp:
-        time_tuple = datetime.datetime.strptime(timestamp, '%d-%m-%Y').timetuple()
-        timestamp = time.mktime(time_tuple)
-        timestamp = datetime.datetime.fromtimestamp(timestamp)
-        timestamp = timezone.make_aware(timestamp)
-    qset = Q()
-    for keyword in keywords:
-        qset |= Q(message__icontains=keyword)
-    if timestamp:
-        qset1 = qset & Q(timestamp__gt=timestamp)
+        timestamp = validate_timestamp(timestamp)
+        print 'timestamp:', timestamp
+        time_filter = Q(timestamp__gt=timestamp)
     else:
-        qset1 = qset
-    fbc = Q()
-    fbp = Q()
-    ytc = Q()
-    twt = Q()
-    if ids:
-        # TODO this needs to be erased new userid field should be added so as to enable filter
-        for _id in ids:
-            fbc |= Q(page_id=_id)
-            fbc |= Q(user_id=_id)
-            fbp |= Q(post_id=_id)
-            fbp |= Q(page_id=_id)
-            ytc |= Q(video_id=_id)
-            ytc |= Q(channel_id=_id)
-            twt |= Q(user_id=_id)
+        time_filter = Q()
+    try: 
+        keyword_filter = reduce(or_, [Q(message__icontains=keyword) for keyword in keywords])
+    except: 
+        keyword_filter = Q()
+    try: 
+        user_filter = reduce(or_, [Q(user_id__iregex=r'%s'%user.strip()) for user in users] +\
+                [Q(username__iregex=r'%s'%user.strip()) for user in users])
+    except:
+        user_filter = Q()
 
-    valid_fb_posts = Fbpost.objects.filter(qset1 & fbp)
-    valid_fb_comments = Fbcomment.objects.filter(qset1 & fbc)
-    valid_yt_comments = Ytcomment.objects.filter(qset1 & ytc)
-    valid_tweets = Tweet.objects.filter(qset1 & twt)
-
-    valid_fb_posts = list(valid_fb_posts)
-    valid_fb_comments = list(valid_fb_comments)
-    valid_yt_comments = list(valid_yt_comments)
-    valid_tweets = list(valid_tweets)
+    valid_fb_posts = list(Fbpost.objects.filter(keyword_filter).filter(user_filter).filter(time_filter))
+    valid_fb_comments = list(Fbcomment.objects.filter(keyword_filter).filter(user_filter).filter(time_filter))
+    valid_yt_comments = list(Ytcomment.objects.filter(keyword_filter).filter(user_filter).filter(time_filter))
+    valid_tweets = list(Tweet.objects.filter(keyword_filter).filter(user_filter).filter(time_filter))
 
     sort_by_key_occ(valid_fb_posts, keywords)
     sort_by_key_occ(valid_fb_comments, keywords)
@@ -117,93 +88,3 @@ def search(keywords, timestamp, ids):
         'tweets_count': len(valid_tweets)
     }
 
-
-def export_to_excel(keywords, context):
-    response = HttpResponse(content_type='application/ms-excel')
-    response['Content-Disposition'] = 'attachment; filename="results.xls"'
-    wb = xlwt.Workbook(encoding='utf-8')
-    ws = wb.add_sheet('Users')
-    row_num = 0
-    count_total = context['fb_comments_count'] + \
-            context['fb_posts_count'] + context['yt_comments_count']
-    font = xlwt.XFStyle()
-    bold_font = xlwt.XFStyle()
-    bold_font.bold = True
-    ws.write(0, 0, "SEARCH RESULTS", bold_font)
-    ws.write(0, 1, count_total, bold_font)
-    ws.write(1, 0, "KEYWORDS", bold_font)
-    ws.write(1, 1, keywords, bold_font)
-
-    ws.write(4, 0, "Facebook Comments", bold_font)
-    ws.write(4, 1, context['fb_comments_count'], bold_font)
-    cols = ['id', 'username', 'timestamp', 'message']
-    for col_num in xrange(len(cols)):
-        ws.write(5, col_num, cols[col_num], bold_font)
-    row_num = 6
-    for comment in context['fb_comments']:
-        ws.write(row_num, 0, comment.comment_id, font)
-        ws.write(row_num, 1, comment.username, font)
-        ws.write(row_num, 2, str(comment.timestamp), font)
-        ws.write(row_num, 3, comment.message, font)
-        row_num += 1
-
-    row_num += 1
-    ws.write(row_num, 0, "Facebook Posts", bold_font)
-    ws.write(row_num, 1, context['fb_posts_count'], bold_font)
-    row_num += 1
-    cols = ['id', 'pagename', 'timestamp', 'message']
-    for col_num in xrange(len(cols)):
-        ws.write(row_num, col_num, cols[col_num], bold_font)
-    row_num += 1
-    for post in context['fb_posts']:
-        ws.write(row_num, 0, post.post_id, font)
-        ws.write(row_num, 1, post.pagename, font)
-        ws.write(row_num, 2, str(post.timestamp), font)
-        ws.write(row_num, 3, post.message, font)
-        row_num += 1
-
-    row_num += 1
-    ws.write(row_num, 0, 'Youtube Comments', bold_font)
-    ws.write(row_num, 1, context['yt_comments_count'], bold_font)
-    row_num += 1
-    cols = ['id', 'username', 'timestamp', 'video', 'comment']
-    for col_num in xrange(len(cols)):
-        ws.write(row_num, col_num, cols[col_num], bold_font)
-    row_num += 1
-    for comment in context['yt_comments']:
-        ws.write(row_num, 0, comment.comment_id, font)
-        ws.write(row_num, 1, comment.username, font)
-        ws.write(row_num, 2, str(comment.timestamp), font)
-        ws.write(row_num, 3, comment.video, font)
-        ws.write(row_num, 4, comment.message, font)
-        row_num += 1
-
-    row_num += 1
-    ws.write(row_num, 0, 'Tweets', bold_font)
-    ws.write(row_num, 1, context['tweets_count'], bold_font)
-    row_num += 1
-    cols = ['id', 'username', 'timestamp', 'tweet']
-    for col_num in xrange(len(cols)):
-        ws.write(row_num, col_num, cols[col_num], bold_font)
-    row_num += 1
-    for tweet in context['tweets']:
-        ws.write(row_num, 0, tweet.tweet_id, font)
-        ws.write(row_num, 1, tweet.username, font)
-        ws.write(row_num, 2, str(tweet.timestamp), font)
-        ws.write(row_num, 3, tweet.message, font)
-        row_num += 1
-
-    wb.save(response)
-    return response
-
-
-def sort_by_key_occ(obj_list, keywords):
-    for i in xrange(len(obj_list)):
-        freq = 0
-        for keyword in keywords:
-            if keyword in obj_list[i].message:
-                freq += 1
-        obj_list[i] = (freq, obj_list[i])
-    obj_list.sort(key=lambda x: x[0], reverse=True)
-    for i in xrange(len(obj_list)):
-        obj_list[i] = obj_list[i][1]
