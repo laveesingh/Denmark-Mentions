@@ -90,10 +90,12 @@ def sort_by_key_occ(obj_list, keywords):
     for i in xrange(len(obj_list)):
         freq = 0
         for keyword in keywords:
-            if keyword in obj_list[i].message:
+            if keyword.lower() in obj_list[i].message.lower():
                 freq += 1
         obj_list[i] = (freq, obj_list[i])
     obj_list.sort(key=lambda x: x[0], reverse=True)
+    # freq = [x for x, y in obj_list]
+    # print 'freq:', freq
     for i in xrange(len(obj_list)):
         obj_list[i] = obj_list[i][1]
 
@@ -119,7 +121,7 @@ def highlight_occurrences(keywords, results):
 
 
 def extract_search_elements(qstring, users):
-    keywords = re.findall(r'(\w[\w\s]*)', qstring)
+    keywords = [keyword for keyword in re.findall(r'(\w[\w\s]*)', qstring) if len(keyword) >= 4]
     users = re.findall(r'(\w[\w\s]*)', users)
     return (keywords, users)
 
