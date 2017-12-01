@@ -40,7 +40,8 @@ def main(request):
         timestamp = form.cleaned_data.get('date')
         export = form.cleaned_data.get('export_to_excel')
         results = search(keywords, users, timestamp)
-        highlight_occurrences(' '.join(keywords), results)
+        if not export:
+            highlight_occurrences(' '.join(keywords), results)
         context = dict(results)
         context['form'] = form
         if export:
@@ -54,37 +55,41 @@ def main(request):
 def search(keywords, users, timestamp):
     if timestamp:
         timestamp = validate_timestamp(timestamp)
-        print 'timestamp:', timestamp
         time_filter = Q(timestamp__gt=timestamp)
     else:
         time_filter = Q()
     try: 
-        keyword_filter = reduce(or_, [Q(message__icontains=keyword) for keyword in keywords])
+        tempkeywords = [word for keyword in keywords for word in keyword.split('+')]
+        keyword_filter = reduce(or_, [Q(message__icontains=keyword) for keyword in tempkeywords])
+        and_filter = Q()
+        for keyword in keywords:
+            temp_filter = Q()
+            for word in keyword.split('+'):
+                temp_filter &= Q(message__icontains=word.strip())
+            and_filter |= temp_filter
     except: 
+        print 'error occurred during creation of keyword filter'
         keyword_filter = Q()
     try: 
         user_filter = reduce(or_, [Q(user_id__iregex=r'%s'%user.strip()) for user in users] +\
                 [Q(username__iregex=r'%s'%user.strip()) for user in users])
+        print 'error occurred during creation of user filter'
     except:
         user_filter = Q()
 
-    valid_fb_posts = list(Fbpost.objects.filter(keyword_filter).filter(user_filter).filter(time_filter))
-    valid_fb_comments = list(Fbcomment.objects.filter(keyword_filter).filter(user_filter).filter(time_filter))
-    valid_yt_comments = list(Ytcomment.objects.filter(keyword_filter).filter(user_filter).filter(time_filter))
-    valid_tweets = list(Tweet.objects.filter(keyword_filter).filter(user_filter).filter(time_filter))
+    valid_fb_posts = list(Fbpost.objects.filter(and_filter).filter(user_filter).filter(time_filter))
+    valid_fb_comments = list(Fbcomment.objects.filter(and_filter).filter(user_filter).filter(time_filter))
+    valid_yt_comments = list(Ytcomment.objects.filter(and_filter).filter(user_filter).filter(time_filter))
+    valid_tweets = list(Tweet.objects.filter(and_filter).filter(user_filter).filter(time_filter))
 
     sort_by_key_occ(valid_fb_posts, keywords)
     sort_by_key_occ(valid_fb_comments, keywords)
     sort_by_key_occ(valid_yt_comments, keywords)
     sort_by_key_occ(valid_tweets, keywords)
     return {
-        'fb_comments': valid_fb_comments,
-        'fb_comments_count': len(valid_fb_comments),
-        'fb_posts': valid_fb_posts,
-        'fb_posts_count': len(valid_fb_posts),
-        'yt_comments': valid_yt_comments,
-        'yt_comments_count': len(valid_yt_comments),
-        'tweets': valid_tweets,
-        'tweets_count': len(valid_tweets)
+        'fb_comments': valid_fb_comments, 'fb_comments_count': len(valid_fb_comments),
+        'fb_posts': valid_fb_posts, 'fb_posts_count': len(valid_fb_posts),
+        'yt_comments': valid_yt_comments, 'yt_comments_count': len(valid_yt_comments),
+        'tweets': valid_tweets, 'tweets_count': len(valid_tweets)
     }
 

@@ -129,12 +129,14 @@
                   <div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
                     <div class="modal-dialog" role="document" style="width: 900px !important;">
                       <div class="modal-content"style="width: 900px !important;">
+                        <center>
                         <div class="modal-header"style="width: 900px !important;">
-                          <h5 class="modal-title" id="exampleModalLabel">How to use properly</h5>
+                          <center><h5 class="modal-title" id="exampleModalLabel">How to use properly</h5></center>
                           <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                             <span aria-hidden="true">&times;</span>
                           </button>
                         </div>
+                        </center>
                         <center>
                         <div class="modal-body"style="width: 900px !important;">
                           <p>There are three main input fields: keywords, users, date.</p>
@@ -164,6 +166,9 @@
                               <p>
                               <em>Users can be kept empty in that case all articles with keyword occurrences should show.</em>
                               <p>
+                            </li>
+                            <li>
+                              <em>"facebook+youtube" will give you articles that contain both facebook and youtube. "facebook+youtube, gmail+google" will give you article that contain (facebook and youtube) or (google or gmail). Turns out "," works as "OR" operator and "+" works as "AND" operator.</em>
                             </li>
                             <li>Facebook access token is required to initiate updating the database, this token can be fetched <a target='blank' href="https://developers.facebook.com/tools/explorer/145634995501895/?method=GET&path=%7Bpage-id%7D&version=v2.10">here</a><li>
                           </ul>
