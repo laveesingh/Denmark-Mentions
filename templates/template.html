@@ -55,7 +55,7 @@
       <div class='row'>
         <div class='col-2'></div>
         <div class='col-8'>
-          <center><h2>Denmark Mentions</h2></center>
+          <center><h2 style='margin-top: 20px; margin-bottom: 20px; font-size: 3em; color: #37a000;'>Denmark Mentions</h2></center>
         </div>
         <div class='col-2'></div>
       </div>
@@ -105,21 +105,38 @@
               </div>
             </div>
             <br />
+            <div class='row'>
+              <div class='col-12'>
+                <div class='input-group'>
+                  <input type='text' class='form-control' placeholder='facebook access token here' id='access_token' />
+                  <button class='btn btn-danger input-group-addon' id="update-btn" title='it should take a while'>
+                    Update Archive
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class='col-2'>
             <center>
               <div class='row'>
                 <div class='col-12'>
-                  <button type="button" class="btn btn-primary btn-lg" data-toggle="modal" data-target="#exampleModal">
+                  <button type="button" class="btn btn-primary btn-lg" data-toggle="modal" data-target="#exampleModal"
+                        style="background-color: #37a000; border-color: #48b111"
+                    >
                     See guide to using this!
                   </button>
                   <div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
                     <div class="modal-dialog" role="document" style="width: 900px !important;">
                       <div class="modal-content"style="width: 900px !important;">
+                        <center>
                         <div class="modal-header"style="width: 900px !important;">
-                          <h5 class="modal-title" id="exampleModalLabel">How to use properly</h5>
+                          <center><h5 class="modal-title" id="exampleModalLabel">How to use properly</h5></center>
                           <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                             <span aria-hidden="true">&times;</span>
                           </button>
                         </div>
+                        </center>
                         <center>
                         <div class="modal-body"style="width: 900px !important;">
                           <p>There are three main input fields: keywords, users, date.</p>
@@ -150,6 +167,9 @@
                               <em>Users can be kept empty in that case all articles with keyword occurrences should show.</em>
                               <p>
                             </li>
+                            <li>
+                              <em>"facebook+youtube" will give you articles that contain both facebook and youtube. "facebook+youtube, gmail+google" will give you article that contain (facebook and youtube) or (google or gmail). Turns out "," works as "OR" operator and "+" works as "AND" operator.</em>
+                            </li>
                             <li>Facebook access token is required to initiate updating the database, this token can be fetched <a target='blank' href="https://developers.facebook.com/tools/explorer/145634995501895/?method=GET&path=%7Bpage-id%7D&version=v2.10">here</a><li>
                           </ul>
                         </div>
@@ -165,19 +185,7 @@
                 </div>
               </div>
             </center>
-            <div class='row'>
-              <div class='col-12'>
-                <div class='input-group'>
-                  <input type='text' class='form-control' placeholder='facebook access token here' id='access_token' />
-                  <button class='btn btn-danger input-group-addon' id="update-btn" title='it should take a while'>
-                    Update Archive
-                  </button>
-                </div>
-              </div>
-            </div>
-          </div>
         </div>
-        <div class='col-2'> </div>
       </div>
       <a name='fb-comments-section'></a>
       {% if fb_comments %}

@@ -101,9 +101,10 @@ def sort_by_key_occ(obj_list, keywords):
 
 
 def highlight_occurrences(keywords, results):
+    keywords = keywords.replace('+', ' ')
     for i in xrange(len(results['fb_comments'])):
         for keyword in keywords.split():
-            results['fb_comments'][i].message = results['fb_comments'][i].message.lower().replace(keyword.lower(), 
+            results['fb_comments'][i].message = results['fb_comments'][i].message.lower().replace(keyword.lower().strip(), 
                     '<span style="background-color: yellow; ">'+keyword+'</span>')
     for i in xrange(len(results['fb_posts'])):
         for keyword in keywords.split():
@@ -121,7 +122,8 @@ def highlight_occurrences(keywords, results):
 
 
 def extract_search_elements(qstring, users):
-    keywords = [keyword for keyword in re.findall(r'(\w[\w\s]*)', qstring) if len(keyword) >= 4]
+    keywords = [keyword for keyword in re.findall(
+        r'(\w[\w\s+]*)', qstring) if len(keyword) >= 4]
     users = re.findall(r'(\w[\w\s]*)', users)
     return (keywords, users)
 
