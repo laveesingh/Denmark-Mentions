@@ -185,7 +185,7 @@
                         </span>
                       </div>
                       <div class='card-block'>
-                        <h4 class='card-title'>Page: {{post.pagename}}
+                        <h4 class='card-title'>Page: {{post.username}}
                           {% if post.page_id %}
                             ({{post.page_id}})
                           {% endif %}
@@ -265,7 +265,7 @@
                       <span>Tweet ({{tweet.tweet_id}})</span>
                     </div>
                     <div class='card-block'>
-                      <h4 class='card-title'>User: {{tweet.username}}({{  tweet.user_id }})</h4>
+                      <h6 class='card-title'>User: {{tweet.username}} ({{  tweet.user_id }})</h6>
                       <h6 class='card-subtitle mb-2 text-muted'>Timestamp: {{tweet.timestamp}}</h6>
                       <hr>
                       <p class='card-text'>{{tweet.message|safe}}</p>

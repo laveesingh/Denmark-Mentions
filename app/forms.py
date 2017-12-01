@@ -23,18 +23,18 @@ class Form(forms.Form):
                 ),
             required=False
             )
-    ids = forms.CharField(
-            widget=forms.TextInput(
-                attrs={
-                    'type': 'text',
-                    'class': 'form-control',
-                    'placeholder': 'IDs',
-                    'title': 'space separated ids to limit results',
-                    'id': 'ids'
-                    }
-                ),
-            required=False
-            )
+    # ids = forms.CharField(
+            # widget=forms.TextInput(
+                # attrs={
+                    # 'type': 'text',
+                    # 'class': 'form-control',
+                    # 'placeholder': 'IDs',
+                    # 'title': 'space separated ids to limit results',
+                    # 'id': 'ids'
+                    # }
+                # ),
+            # required=False
+            # )
     export_to_excel = forms.BooleanField(
             widget=forms.CheckboxInput(
                 attrs={
