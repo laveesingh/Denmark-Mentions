@@ -20,7 +20,7 @@ class Fbpost(models.Model):
     message = models.TextField(default="", null=True)
     username = models.CharField(max_length=100, default="", null=True)
     timestamp = models.DateTimeField(unique=False)
-    user_id = models.CharField(max_length=1, null=True)
+    user_id = models.CharField(max_length=100, default='', null=True)
 
     def __repr__(self):
         return self.post_id if self.post_id else "FBPOST"

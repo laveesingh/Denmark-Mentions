@@ -118,17 +118,10 @@ def highlight_occurrences(keywords, results):
 
 
 
-def extract_search_elements(qstring):
-    match = re.search(r'keywords=(?P<keywords>[\w\s]+(,[\s\w]+)*)', qstring.replace('usernames', '').replace('userids', ''))
-    keywords = match.group('keywords') if match else None
-    match = re.search(r'usernames=(?P<usernames>[\w\s]+(,[\s\w]+)*)', qstring)
-    usernames = match.group('usernames') if match else None
-    match = re.search(r'userids=(?P<userids>[\w\s]+(,[\s\w]+)*)', qstring)
-    userids = match.group('userids') if match else None
-    keywords = keywords.split(',') if keywords else []
-    usernames = usernames.split(',') if usernames else []
-    userids = userids.split(',') if userids else []
-    return (keywords, usernames, userids)
+def extract_search_elements(qstring, users):
+    keywords = re.findall(r'(\w[\w\s]*)', qstring)
+    users = re.findall(r'(\w[\w\s]*)', users)
+    return (keywords, users)
 
 
 def validate_timestamp(timestamp):

@@ -25,50 +25,39 @@ from app.utils import fetch_filters
 def main(request):
     if request.method == 'POST':
         form = Form(request.POST)
-        if form.is_valid():
-            keywords = form.cleaned_data.get('keywords')
-            timestamp = form.cleaned_data.get('date')
-            export = form.cleaned_data.get('export_to_excel')
-            # ids = form.cleaned_data.get('ids').split()
-            # results = search(keywords, timestamp, ids)
-            results = search(keywords, timestamp)
-            # inject html to highlight occurrences
-            highlight_occurrences(' '.join(extract_search_elements(keywords)[0]), results)
-        else:
-            results = defaultdict(int)
-            keywords = "ERROR!!!"
+        form.is_valid()
+        keywords = form.cleaned_data.get('keywords')
+        users = form.cleaned_data.get('users')
+        if not keywords and not users:
+            return HttpResponse(
+                    '''No input field specified!!! <a href='/'>Go Back</a>'''
+                    )
+        timestamp = form.cleaned_data.get('date')
+        export = form.cleaned_data.get('export_to_excel')
+        results = search(keywords, users, timestamp)
+        highlight_occurrences(' '.join(extract_search_elements(
+            keywords if keywords else '', users if users else '')[0]), results)
         context = dict(results)
         context['form'] = form
         if export:
             return export_to_excel(keywords, context)
-        # print('context:', context)
         return render(request, 'template.html', context)
     form = Form()
     return render(request, 'template.html', {
         'form': form
     })
 
-def search(qstring, timestamp):
+def search(keywords, users, timestamp):
     if timestamp:
         timestamp = validate_timestamp(timestamp)
-    keywords, usernames, userids = extract_search_elements(qstring)
-    # keywords_filter, fbc_user_filter, fbp_user_filter, ytc_user_filter,\
-            # tweet_user_filter = fetch_filters(keywords, usernames, userids, timestamp)
-
-    # valid_fb_posts = Fbpost.objects.filter(keywords_filter & fbp_user_filter)
-    # valid_fb_comments = Fbcomment.objects.filter(keywords_filter & fbc_user_filter)
-    # valid_yt_comments = Ytcomment.objects.filter(keywords_filter & ytc_user_filter)
-    # valid_tweets = Tweet.objects.filter(keywords_filter & tweet_user_filter)
-    print "keywords:", keywords
-    print "userids: ", userids
-    print 'usernames:', usernames
+    keywords, users = extract_search_elements(keywords if keywords else '', users if users else '')
     try: 
         keyword_filter = reduce(or_, [Q(message__icontains=keyword) for keyword in keywords])
     except: 
         keyword_filter = Q()
     try: 
-        user_filter = reduce(or_, [Q(user_id__iregex=r'%s'%userid) for userid in userids] +\
-                [Q(username__iregex=r'%s'%username.lower()) for username in usernames])
+        user_filter = reduce(or_, [Q(user_id__iregex=r'%s'%user.strip()) for user in users] +\
+                [Q(username__iregex=r'%s'%user.strip()) for user in users])
     except:
         user_filter = Q()
 
@@ -96,5 +85,4 @@ def search(qstring, timestamp):
         'tweets': valid_tweets,
         'tweets_count': len(valid_tweets)
     }
-
 
