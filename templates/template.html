@@ -55,7 +55,7 @@
       <div class='row'>
         <div class='col-2'></div>
         <div class='col-8'>
-          <center><h2>Denmark Mentions</h2></center>
+          <center><h2 style='margin-top: 20px; margin-bottom: 20px; font-size: 3em; color: #37a000;'>Denmark Mentions</h2></center>
         </div>
         <div class='col-2'></div>
       </div>
@@ -105,10 +105,25 @@
               </div>
             </div>
             <br />
+            <div class='row'>
+              <div class='col-12'>
+                <div class='input-group'>
+                  <input type='text' class='form-control' placeholder='facebook access token here' id='access_token' />
+                  <button class='btn btn-danger input-group-addon' id="update-btn" title='it should take a while'>
+                    Update Archive
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class='col-2'>
             <center>
               <div class='row'>
                 <div class='col-12'>
-                  <button type="button" class="btn btn-primary btn-lg" data-toggle="modal" data-target="#exampleModal">
+                  <button type="button" class="btn btn-primary btn-lg" data-toggle="modal" data-target="#exampleModal"
+                        style="background-color: #37a000; border-color: #48b111"
+                    >
                     See guide to using this!
                   </button>
                   <div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
@@ -165,19 +180,7 @@
                 </div>
               </div>
             </center>
-            <div class='row'>
-              <div class='col-12'>
-                <div class='input-group'>
-                  <input type='text' class='form-control' placeholder='facebook access token here' id='access_token' />
-                  <button class='btn btn-danger input-group-addon' id="update-btn" title='it should take a while'>
-                    Update Archive
-                  </button>
-                </div>
-              </div>
-            </div>
-          </div>
         </div>
-        <div class='col-2'> </div>
       </div>
       <a name='fb-comments-section'></a>
       {% if fb_comments %}
