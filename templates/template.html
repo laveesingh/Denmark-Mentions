@@ -62,7 +62,7 @@
       <div class='row'>
         <div class='col-2'>
           <p>Survey Links</p>
-          <ul>
+          <ul style='list-style:none;'>
             <li><a target='blank' href='https://www.socialbakers.com/statistics/twitter/profiles/denmark/' class='btn btn-info'>Twitter</a></li>
             <li><a target='blank' href='https://www.socialbakers.com/statistics/facebook/pages/total/denmark/' class='btn btn-primary'>Facebook</a></li>
             <li><a target='blank' href='https://www.socialbakers.com/statistics/youtube/channels/denmark/' class='btn btn-danger'>Youtube</a></li>
@@ -104,20 +104,71 @@
                 </form>
               </div>
             </div>
-            <div class='row'>
-              <div class='col-12'>
-                <div class='alert alert-info' role='alert'>
-                  <strong>Search Keywords:</strong> Enter keywords to find social media occurrences.<br/>
-                  <strong>Date Field:</strong> Enter date in given format to include results after that date only.<br />
-                  <strong>Checkbox:</strong> Tick the checkbox if you want to download results in excel format.<br/>
-                  <strong>IDs:</strong> Space separated list of IDs to restrict results to include specific ids. An id can be facebook page_id, user_id; youtube channel_id, video_id; twitter user_id etc.
+            <br />
+            <center>
+              <div class='row'>
+                <div class='col-12'>
+                  <button type="button" class="btn btn-primary btn-lg" data-toggle="modal" data-target="#exampleModal">
+                    See guide to using this!
+                  </button>
+                  <div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                    <div class="modal-dialog" role="document" style="width: 900px !important;">
+                      <div class="modal-content"style="width: 900px !important;">
+                        <div class="modal-header"style="width: 900px !important;">
+                          <h5 class="modal-title" id="exampleModalLabel">How to use properly</h5>
+                          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                          </button>
+                        </div>
+                        <center>
+                        <div class="modal-body"style="width: 900px !important;">
+                          <p>There are three main input fields: keywords, users, date.</p>
+                          <ul>
+                            <li>
+                              <p><b>Keywords</b> field is a list of comma(,) separated list of words to find occurrences for.
+                              <b>Each keyword length should be greater than or equal to 4, otherwise it would be ignored.</b>
+                              <br/>
+                              E.g.: "something, nothing else" => It has two keywords, first is "something" and 
+                              second is "nothing else".</p>
+                            </li>
+                            <li>
+                              <p><b>Users</b> field is a list of comma(,) separated list of users to look into.
+                              In this list you can either provide a numeric id or a textual username.<br/>
+                              E.g.: "11234123, sheldon cooper" => It has two users, first is "11234123" and 
+                              second is "sheldon cooper". Result will only include articles from any of the users.</p>
+                            </li>
+                            <li>
+                              <p><b>Date</b> field includes results that were published after the given date only.</p>
+                            </li>
+                            <li>
+                              <p>
+                              <em>You can keep keywords empty in that case all posts by given users should show</em>
+                              </p>
+                            </li>
+                            <li>
+                              <p>
+                              <em>Users can be kept empty in that case all articles with keyword occurrences should show.</em>
+                              <p>
+                            </li>
+                            <li>Facebook access token is required to initiate updating the database, this token can be fetched <a target='blank' href="https://developers.facebook.com/tools/explorer/145634995501895/?method=GET&path=%7Bpage-id%7D&version=v2.10">here</a><li>
+                          </ul>
+                        </div>
+                        </center>
+                        <div class="modal-footer">
+                          <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                          <button type="button" class="btn btn-primary">Save changes</button>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+
                 </div>
               </div>
-            </div>
+            </center>
             <div class='row'>
               <div class='col-12'>
                 <div class='input-group'>
-                  <input type='text' class='form-control' placeholder='access token here' id='access_token' />
+                  <input type='text' class='form-control' placeholder='facebook access token here' id='access_token' />
                   <button class='btn btn-danger input-group-addon' id="update-btn" title='it should take a while'>
                     Update Archive
                   </button>
