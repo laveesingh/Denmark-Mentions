@@ -40,13 +40,13 @@ def export_to_excel(keywords, context):
     ws.write(row_num, 0, "Facebook Posts", bold_font)
     ws.write(row_num, 1, context['fb_posts_count'], bold_font)
     row_num += 1
-    cols = ['id', 'pagename', 'timestamp', 'message']
+    cols = ['id', 'username', 'timestamp', 'message']
     for col_num in xrange(len(cols)):
         ws.write(row_num, col_num, cols[col_num], bold_font)
     row_num += 1
     for post in context['fb_posts']:
         ws.write(row_num, 0, post.post_id, font)
-        ws.write(row_num, 1, post.pagename, font)
+        ws.write(row_num, 1, post.username, font)
         ws.write(row_num, 2, str(post.timestamp), font)
         ws.write(row_num, 3, post.message, font)
         row_num += 1
